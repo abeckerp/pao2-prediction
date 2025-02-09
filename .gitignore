@@ -11,3 +11,4 @@ pao2_prediction/data
 pao2_prediction/data_pseudo
 _lasso
 .DS_Store
+poetry.lock
