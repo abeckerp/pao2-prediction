@@ -1,0 +1,808 @@
+---
+title: "$paO_2$ Prediction in Neurosurgical Patients" 
+subtitle: "Preprocessing"
+author: "Andrea S. Gutmann"
+date: today
+date-format: "YYYY-MM-DD"
+format:
+    html: 
+        code-fold: true
+        toc: true
+        toc-depth: 5
+        toc-expand: true
+        toc-title: Contents
+        number-sections: true
+    # pdf:
+    #     toc: true
+    #     number-sections: true
+    #     toc-location: left
+    #     code-line-numbers: true
+    #     output-ext: "pdf"
+    #     papersize: "A4"
+    #     include-in-header: 
+    #         text: |
+    #             \usepackage{fvextra}
+    #             \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
+    #             \DefineVerbatimEnvironment{OutputCode}{Verbatim}{breaklines,commandchars=\\\{\}}
+    #     include-before-body:
+    #         text: |
+    #             \RecustomVerbatimEnvironment{verbatim}{Verbatim}{
+    #             showspaces = false,
+    #             showtabs = false,
+    #             breaksymbolleft={},
+    #             breaklines
+    #             % Note: setting commandchars=\\\{\} here will cause an error 
+    #             }
+jupyter: python3
+---
+
+## Preprocessing
+
+### Loading libraries
+```{python}
+# | label: loading_libraries
+import csv
+import pickle
+import sys
+import time
+import random
+import math
+import pprint
+import os
+import session_info
+import matplotlib
+import yaml
+import platform
+
+import numpy as np
+import pandas as pd
+import scipy.stats as stats
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+from collections import Counter
+from itertools import chain
+from matplotlib.patches import Patch
+from scipy.stats import norm, sem, t
+from sklearn import preprocessing, model_selection, metrics
+from sklearn.base import clone
+from sklearn.experimental import enable_iterative_imputer
+from sklearn.model_selection import GroupKFold, train_test_split, cross_val_score
+from sklearn.impute import IterativeImputer
+from sklearn.utils import shuffle
+from matplotlib.offsetbox import AnchoredText
+import matplotlib.ticker as ticker
+import matplotlib.transforms as mtransforms
+
+from sklearn.ensemble import (
+    GradientBoostingRegressor,
+    RandomForestRegressor,
+)
+from sklearn.neighbors import KNeighborsRegressor
+from sklearn.svm import SVR
+from sklearn.neural_network import MLPRegressor
+from sklearn.linear_model import LinearRegression, SGDRegressor
+from sklearn.feature_selection import RFECV, RFE
+from statsmodels.stats.outliers_influence import variance_inflation_factor
+from matplotlib.ticker import NullFormatter
+from time import perf_counter
+from datetime import datetime
+
+from itertools import chain
+from joblib import Parallel, delayed
+from custom_functions import (
+    evaluate,
+    inverse_transform_shaped,
+    get_evaluation,
+    plot_cv_indices,
+    return_table,
+)
+
+pp = pprint.PrettyPrinter(indent=4)
+np.random.seed(42)
+
+matplotlib.rcParams["figure.dpi"] = 300
+
+sns.set_style('whitegrid')
+
+with open("config.yml", "r") as file:
+    config = yaml.safe_load(file)
+
+
+algorithm_dict = {
+    "gbr": GradientBoostingRegressor(**config.get("default_parameters").get("gbr")),
+    "knn": KNeighborsRegressor(**config.get("default_parameters").get("knn")),
+    "rfr": RandomForestRegressor(**config.get("default_parameters").get("rfr")),
+    "svr": SVR(**config.get("default_parameters").get("svr")),
+    "sgd": SGDRegressor(**config.get("default_parameters").get("sgd")),
+    "mlp": MLPRegressor(**config.get("default_parameters").get("mlp")),
+    "mlr": LinearRegression(**config.get("default_parameters").get("mlr")),
+}
+
+```
+
+### Preprocessing
+
+<!--
+Load data with identifiers
+```{python}
+# | label: combining_data_pseudo
+# | eval: false
+# | echo: false
+
+with open(config.get("csv").get("one_time_measurements_pseudo"), "r") as one_time_csv:
+    one_time_data = pd.read_csv(one_time_csv)
+    one_time_data = one_time_data.drop("Unnamed: 0", axis=1)
+
+with open(config.get("csv").get("multi_times_measurements_pseudo"), "r") as multi_time_csv:
+    multi_time_data = pd.read_csv(multi_time_csv)
+    multi_time_data = multi_time_data.drop("Unnamed: 0", axis=1)
+
+pp.pprint(Counter(multi_time_data["temperature_location"]))
+print("Temperature location of no use -> remove.")
+multi_time_data = multi_time_data.drop("temperature_location", axis=1)
+
+data = multi_time_data.merge(one_time_data, on="identifier")
+```
+-->
+
+```{python}
+# | label: combining_data
+
+with open(config.get("csv").get("one_time_measurements"), "r") as one_time_csv:
+    one_time_data = pd.read_csv(one_time_csv)
+    one_time_data = one_time_data.rename(columns={'opid': 'identifier'})
+    one_time_data = one_time_data.drop(['case_number','Unnamed: 0'], axis=1)
+
+with open(config.get("csv").get("multi_times_measurements"), "r") as multi_time_csv:
+    multi_time_data = pd.read_csv(multi_time_csv)
+    multi_time_data = multi_time_data.rename(columns={'opid': 'identifier'})
+
+
+pp.pprint(Counter(multi_time_data["temperature_location"]))
+print("Temperature location of no use -> remove.")
+multi_time_data = multi_time_data.drop("temperature_location", axis=1)
+
+data = multi_time_data.merge(one_time_data, on="identifier")
+```
+
+```{python}
+# | label: preprocessing
+print(session_info.show(html=False))
+print(platform.system()) 
+print(platform.release())
+
+### rename sex values
+data['sex'] = data['sex'].apply(lambda _: 'female' if _ == 'w' else 'male')
+
+### convert data types ###
+data = data.astype({"idx": "category", "discharge_type": "category"})
+
+data.loc[
+    (data.first_horowitz.isnull() == True) & (data.fio2.isnull() == False),
+    "first_horowitz",
+] = (
+    data.loc[
+        (data.first_horowitz.isnull() == True) & (data.fio2.isnull() == False),
+        "paO2_measured",
+    ]
+    / data.loc[
+        (data.first_horowitz.isnull() == True) & (data.fio2.isnull() == False), "fio2"
+    ]
+)
+
+print(f"Starting: {len(data.identifier.unique()):,} surgeries with {len(data):,} datapoints.\n")
+
+### structure diagnoses ###
+data = data.astype({"sap_diagnosis": "string"})
+data = data.astype({"diagnosis": "string"})
+no_sap_diagnosis = []
+i = 0
+# for every single operation
+for identifier in data.identifier.unique():
+    if not isinstance(data[data["identifier"] == identifier]["sap_diagnosis"].iloc[0], str):
+        no_sap_diagnosis.append(identifier)
+    else:
+        diagnoses = data[data["identifier"] == identifier]["sap_diagnosis"].iloc[0].split("|")
+        if isinstance(data[data["identifier"] == identifier]["diagnosis"].iloc[0], str):
+            diagnoses.append(data[data["identifier"] == identifier]["diagnosis"].iloc[0])
+            i += 1
+        data.loc[data["identifier"] == identifier, "diagnoses"] = "|".join(diagnoses)
+
+print(
+    f"Found {len(no_sap_diagnosis)} without a valid case number (no diagnosis found in SAP system). Will be removed."
+)
+data = data[~data["identifier"].isin(no_sap_diagnosis)]
+print(f"Remaining: {len(data.identifier.unique()):,} surgeries with {len(data):,} datapoints.\n")
+
+```
+
+### Exclusion criteria
+```{python}
+# | label: exclusion_criteria
+
+# no measured or negative paO2 value
+len_datapoints = len(data)
+len_surgeries = len(data.identifier.unique())
+data = data[pd.notnull(data["paO2_measured"])]
+data = data[data["paO2_measured"] > 0]
+print(f"no measured or negative paO2: removed datapoints -> {len_datapoints-len(data):,}")
+print(
+    f"no measured or negative paO2: removed surgeries -> {len_surgeries-len(data.identifier.unique()):,}"
+)
+print(f"Remaining: {len(data.identifier.unique()):,} surgeries with {len(data):,} datapoints.\n")
+
+## excluding invalid surgeries
+print("Excluding invalid surgeries.")
+
+# no length of stay value / negative
+len_datapoints = len(data)
+len_surgeries = len(data.identifier.unique())
+data = data[pd.notnull(data["los"])]
+data = data[data["los"]>0]
+print(f"no length of stay available or negative: removed datapoints -> {len_datapoints-len(data):,}")
+print(
+    f"no length of stay available or negative: removed surgeries -> {len_surgeries-len(data.identifier.unique()):,}"
+)
+print(f"Remaining: {len(data.identifier.unique()):,} surgeries with {len(data):,} datapoints.\n")
+
+# creatinine value < 0.2
+len_datapoints = len(data)
+len_surgeries = len(data.identifier.unique())
+data = data[data.creatinine >= 0.2]
+print(f"creatinine value < 0.2mg/dl: removed datapoints -> {len_datapoints-len(data):,}")
+print(
+    f"creatinine value < 0.2mg/dl: removed surgeries -> {len_surgeries-len(data.identifier.unique()):,}"
+)
+print(f"Remaining: {len(data.identifier.unique()):,} surgeries with {len(data):,} datapoints.\n")
+
+# patient's 14 <= bmi <= 60
+len_datapoints = len(data)
+len_surgeries = len(data.identifier.unique())
+data = data[data.bmi >= 14]
+data = data[data.bmi <= 60]
+print(
+    f"patient's bmi 14 <= bmi <= 60: removed datapoints -> {len_datapoints-len(data):,}"
+)
+print(
+    f"patient's bmi 14 <= bmi <= 60: removed surgeries -> {len_surgeries-len(data.identifier.unique()):,}"
+)
+print(f"Remaining: {len(data.identifier.unique()):,} surgeries with {len(data):,} datapoints.\n")
+
+# initial horowitz index of <300
+len_datapoints = len(data)
+len_surgeries = len(data.identifier.unique())
+data = data[data.first_horowitz >= 300]
+print(f"initial horowitz index < 300: removed datapoints -> {len_datapoints-len(data):,}")
+print(
+    f"initial horowitz index < 300: removed surgeries -> {len_surgeries-len(data.identifier.unique()):,}"
+)
+print(f"Remaining: {len(data.identifier.unique()):,} surgeries with {len(data):,} datapoints.\n")
+
+# 5 min mv or incision to closure times
+len_datapoints = len(data)
+len_surgeries = len(data.identifier.unique())
+data = data[(data.incision_closure_time >= 5) & (data.mv_time >= 5)]
+print(f"less than 5 min mv time, at least 5 min incision-closure time: removed datapoints -> {len_datapoints-len(data):,}")
+print(f"less than 5 min mv time, at least 5 min incision-closure time: removed surgeries -> {len_surgeries-len(data.identifier.unique()):,}")
+print(f"Remaining: {len(data.identifier.unique()):,} surgeries with {len(data):,} datapoints.\n")
+
+# negative time periods
+len_datapoints = len(data)
+len_surgeries = len(data.identifier.unique())
+data = data[(data.time_to_end > 0) & (data.time_to_incision > 0)]
+print(f"negative time-to-incision or time-to-end periods: removed datapoints -> {len_datapoints-len(data):,}")
+print(f"negative time-to-incision or time-to-end periods: removed surgeries -> {len_surgeries-len(data.identifier.unique()):,}")
+print(f"Remaining: {len(data.identifier.unique()):,} surgeries with {len(data):,} datapoints.\n")
+
+
+print(f"Average number of ABG per patient: {round(len(data)/len(data.identifier.unique()),2)}.")
+
+### excluding invalid lab data values
+print("Excluding invalid/missing measurements.")
+
+# no measured FiO2 value
+len_datapoints = len(data)
+len_surgeries = len(data.identifier.unique())
+data = data[pd.notnull(data["fio2"])]
+data = data[data["fio2"]>0]
+print(f"no measured FiO2 (>0): removed datapoints -> {len_datapoints-len(data):,}")
+print(f"no measured FiO2 (>0): removed surgeries -> {len_surgeries-len(data.identifier.unique()):,}")
+print(f"Remaining: {len(data.identifier.unique()):,} surgeries with {len(data):,} datapoints.\n")
+
+# no measured CO2 value
+len_datapoints = len(data)
+len_surgeries = len(data.identifier.unique())
+data = data[pd.notnull(data["co2"])]
+data = data[data["co2"]>0]
+print(f"no measured CO2 (>0): removed datapoints -> {len_datapoints-len(data):,}")
+print(f"no measured CO2 (>0): removed surgeries -> {len_surgeries-len(data.identifier.unique()):,}")
+print(f"Remaining: {len(data.identifier.unique()):,} surgeries with {len(data):,} datapoints.\n")
+
+# no measured SpO2 value
+len_datapoints = len(data)
+len_surgeries = len(data.identifier.unique())
+data = data[pd.notnull(data["spo2"])]
+data = data[data["spo2"]>0]
+print(f"no measured SpO2 (>0): removed datapoints -> {len_datapoints-len(data):,}")
+print(f"no measured SpO2 (>0): removed surgeries -> {len_surgeries-len(data.identifier.unique()):,}")
+print(f"Remaining: {len(data.identifier.unique()):,} surgeries with {len(data):,} datapoints.\n")
+
+### excluding based on cut-off values
+print("Excluding based on cut-off values.")
+
+# hb value <5
+len_datapoints = len(data)
+len_surgeries = len(data.identifier.unique())
+data = data[data.hemoglobin >= 5]
+print(f"Hemoglobin value < 5g/dl: removed datapoints -> {len_datapoints-len(data):,}")
+print(
+    f"Hemoglobin value < 5g/dl: removed surgeries -> {len_surgeries-len(data.identifier.unique()):,}"
+)
+print(f"Remaining: {len(data.identifier.unique()):,} surgeries with {len(data):,} datapoints.\n")
+
+# ph value <6.8
+len_datapoints = len(data)
+len_surgeries = len(data.identifier.unique())
+data = data[data.ph >= 6.8]
+print(f"pH value < 6.8: removed datapoints -> {len_datapoints-len(data):,}")
+print(
+    f"pH value < 6.8: removed surgeries -> {len_surgeries-len(data.identifier.unique()):,}"
+)
+print(f"Remaining: {len(data.identifier.unique()):,} surgeries with {len(data):,} datapoints.\n")
+
+# heart rate < 20
+len_datapoints = len(data)
+len_surgeries = len(data.identifier.unique())
+data = data[data.heart_rate >= 20]
+print(f"heart rate < 20: removed datapoints -> {len_datapoints-len(data):,}")
+print(
+    f"heart rate < 20: removed surgeries -> {len_surgeries-len(data.identifier.unique()):,}"
+)
+print(f"Remaining: {len(data.identifier.unique()):,} surgeries with {len(data):,} datapoints.\n")
+
+# respiratory rate >= 5
+len_datapoints = len(data)
+len_surgeries = len(data.identifier.unique())
+data = data[data.respiratory_rate >= 5]
+print(f"respiratory rate < 5: removed datapoints -> {len_datapoints-len(data):,}")
+print(
+    f"respiratory rate < 5: removed surgeries -> {len_surgeries-len(data.identifier.unique()):,}"
+)
+print(f"Remaining: {len(data.identifier.unique()):,} surgeries with {len(data):,} datapoints.\n")
+
+# rmv < 2
+len_datapoints = len(data)
+len_surgeries = len(data.identifier.unique())
+data = data[data.rmv >= 2]
+print(f"RMV < 2: removed datapoints -> {len_datapoints-len(data):,}")
+print(
+    f"RMV < 2: removed surgeries -> {len_surgeries-len(data.identifier.unique()):,}"
+)
+print(f"Remaining: {len(data.identifier.unique()):,} surgeries with {len(data):,} datapoints.\n")
+
+
+# measured temperature < 32°C
+len_datapoints = len(data)
+len_surgeries = len(data.identifier.unique())
+data = data[data.temperature >= 32]
+print(f"measured temperature <32°C: removed datapoints -> {len_datapoints-len(data):,}")
+print(
+    f"measured temperature <32°C: removed surgeries -> {len_surgeries-len(data.identifier.unique()):,}"
+)
+print(f"Remaining: {len(data.identifier.unique()):,} surgeries with {len(data):,} datapoints.\n")
+
+# Measured < 60 + SpO2 > 95 + hb > 7
+len_datapoints = len(data)
+len_surgeries = len(data.identifier.unique())
+data = data[~((data.paO2_measured < 60) & (data.spo2 > 95) & (data.hemoglobin > 7))]
+print(
+    f"measured < 60 + SpO2 > 95 + hb > 7: removed datapoints -> {len_datapoints-len(data):,}"
+)
+print(
+    f"measured < 60 + SpO2 > 95 + hb > 7: removed surgeries -> {len_surgeries-len(data.identifier.unique()):,}"
+)
+print(f"Remaining: {len(data.identifier.unique()):,} surgeries with {len(data):,} datapoints.\n")
+
+# add Gadrey's paO2
+data["gadrey"] = ((28.6025) ** 3 / ((1 / (data["spo2"] / 100)) - 0.99)) ** (1 / 3)
+
+### dump current data ###
+
+with open(config.get("pickle").get(f"train_data"), "wb") as train_pickle:
+    pickle.dump(data, train_pickle)
+```
+
+```{python}
+print(f"Average number of ABG per patient: {round(len(data)/len(data.identifier.unique()),2)} in {int(np.mean(data.mv_time))} min => one ABG every {int((np.mean(data.mv_time))/(len(data)/len(data.identifier.unique())))} minutes.")
+```
+
+```{python}
+print("Sampling sites for pH values:")
+
+sampling_sites = data.groupby('identifier')['sampling_site_ph'].apply(lambda x: str(set(x)).strip("'{").strip("'}").replace("_","; ")).to_dict().values()
+
+pprint.pprint(Counter(list(chain.from_iterable(map(lambda x: [_.strip() for _ in x.split(';')], sampling_sites)))))
+
+data = data.drop('sampling_site_ph', axis=1)
+```
+
+```{python}
+print("Sampling sites for Hb values:")
+sampling_sites = data.groupby('identifier')['sampling_site_hb'].apply(lambda x: str(set(x)).strip("'{").strip("'}").replace("_","; ")).to_dict().values()
+
+pprint.pprint(Counter(list(chain.from_iterable(map(lambda x: [_.strip() for _ in x.split(';')], sampling_sites)))))
+
+data = data.drop('sampling_site_hb', axis=1)
+```
+
+### Missing values
+```{python}
+# | label: missing_data_prep
+
+### missing values ###
+len_datapoints = len(data)
+len_surgeries = len(data.identifier.unique())
+
+df = data.drop(
+    ["discharge_type", "ops", "diagnosis", "sap_diagnosis", "diagnoses"], axis=1
+)
+
+# get dummy variables and remove collinerarity variables
+df = pd.get_dummies(df, columns=["sex"], drop_first=True)
+
+df = pd.get_dummies(df, columns=["asa"], drop_first=True)
+df = pd.get_dummies(
+    df, columns=["timepoint_of_measurement"]
+)  # manually combining timepoints
+df["timepoint"] = ""
+df.loc[
+    df.loc[:, "timepoint_of_measurement_intraoperative"] == 1, "timepoint"
+] = "intraoperative"
+df.loc[
+    df.loc[:, "timepoint_of_measurement_post-surgery"] == 1, "timepoint"
+] = "post-surgery"
+df.loc[
+    df.loc[:, "timepoint_of_measurement_pre-surgery"] == 1, "timepoint"
+] = "pre-surgery"
+df["timepoint_intraop"] = 0
+df.loc[df.loc[:, "timepoint"] == "intraoperative", "timepoint_intraop"] = 1
+df = df.drop(["timepoint_of_measurement_intraoperative"], axis=1)
+df = df.drop(["timepoint_of_measurement_post-surgery"], axis=1)
+df = df.drop(["timepoint_of_measurement_pre-surgery"], axis=1)
+df = df.drop(["timepoint"], axis=1)
+
+print("Missing datapoints:\n", df.isnull().sum())
+```
+
+```{python}
+# | label: missing_data_fig
+# | fig-cap: Missing Values
+
+# Dropping more than 20% missings
+too_many_missings = []
+for c in df.columns:
+    if df[c].isnull().sum() > len(df) * 0.2:
+        too_many_missings.append(c)
+
+if len(too_many_missings) > 0:
+    print(
+        f"The following columns have more than 20% missing values => dropping {', '.join(too_many_missings):,}"
+    )
+    df = df.drop(too_many_missings, axis=1)
+
+ax = sns.heatmap(df.isnull(), cbar=False)
+ax.set(xlabel="Features", ylabel="Observations", title="Missing Values")
+
+plt.savefig(f"plots/missing_data.png", dpi=300, bbox_inches="tight")
+
+plt.show()
+```
+
+### Imputing missing values
+```{python}
+# | label: missings_imputation
+min_vals = []
+max_vals = []
+for c in df.drop("last_horowitz", axis=1).columns:
+    min_vals.append(min(df[c].values))
+    max_vals.append(max(df[c].values))
+
+
+imp = IterativeImputer(
+    max_iter=10,
+    random_state=42,
+    skip_complete=True,
+    initial_strategy="median",
+    min_value=min_vals,
+    max_value=max_vals,
+    verbose=5,
+    tol=1e-4,
+)
+last_horowitz = df["last_horowitz"]
+df = pd.DataFrame(
+    imp.fit_transform(df.drop("last_horowitz", axis=1)),
+    columns=[i for i in df.drop("last_horowitz", axis=1).keys()],
+)
+df.loc[:, "last_horowitz"] = last_horowitz
+
+# use mean of creatinine for each identifier
+for identifier in df.identifier.unique():
+    df.loc[df.identifier == identifier, "creatinine"] = np.mean(
+        df.loc[df.identifier == identifier, "creatinine"]
+    )
+
+df = df.astype(
+    {
+        "respiratory_rate": "int32",
+        "systolic": "int32",
+        "diastolic": "int32",
+        "mean_art_press": "int32",
+        "heart_rate": "int32",
+        "age": "int32",
+        "los": "int32",
+        "identifier": "int32",
+    }
+)
+
+# combine all ASA values in one variable
+df["asa"] = 1
+df.loc[df.loc[:, "asa_2"] == 1, "asa"] = 2
+df.loc[df.loc[:, "asa_3"] == 1, "asa"] = 3
+df.loc[df.loc[:, "asa_4"] == 1, "asa"] = 4
+df.loc[df.loc[:, "asa_5"] == 1, "asa"] = 5
+df = df.drop(["asa_2", "asa_3", "asa_4", "asa_5"], axis=1)
+
+df["asa"] = df["asa"].astype("int")
+
+### dump current data ###
+with open(config.get("pickle").get(f"completed_data"), "wb") as ml_pickle:
+    pickle.dump(df, ml_pickle)
+```
+
+<!--
+### Meta data
+```{python}
+# | label: metadata
+display(df.info())
+
+for c in df.columns:
+    print(f"{c}: \n{pp.pformat(df[c].describe().round(4))}\n")
+``` 
+-->
+
+### Comparison to proxies (Figure 3)
+```{python}
+# | label: proxy_comparison
+# | fig-cap: "Comparison to popular proxies"
+
+
+fig, axs = plt.subplot_mosaic(
+    [["a.", "b.", "c."], ["d.", "e.", "f."]],
+    layout="constrained",
+    figsize=(3 * config.get("plot_size"), 3/2 * config.get("plot_size")),
+    gridspec_kw={'height_ratios': [2,1]}
+)
+fig.set_tight_layout(True)
+fig.suptitle("Comparison of proxies to measured $paO_2$ values")
+for (ax_label_upper, ax_label_lower), proxy in zip(
+    zip(list(axs.keys())[:3], list(axs.keys())[3:]), ["fio2", "pAO2", "gadrey"]
+):
+    pooled_paO2 = [
+        np.mean(df.loc[df["identifier"] == identifier, "paO2_measured"].values)
+        for identifier in df.identifier.unique()
+    ]
+    pooled_proxy_values = [
+        np.mean(df.loc[df["identifier"] == identifier, proxy].values) for identifier in df.identifier.unique()
+    ]
+
+    # spearman's rho
+    correlation = stats.spearmanr(pooled_paO2, pooled_proxy_values)
+    r = correlation[0]
+    p = correlation[1]
+    num = len(pooled_paO2)
+    stderr = 1 / math.sqrt(num - 3)
+    delta = 1.96 * stderr
+    lower = math.tanh(math.atanh(r) - delta)
+    upper = math.tanh(math.atanh(r) + delta)
+
+    ###
+    ax = axs.get(ax_label_upper)
+    ax.scatter(df[proxy], df["paO2_measured"], edgecolors=(0, 0, 0))
+    ax.plot(
+        [df[proxy].min(), df[proxy].max()],
+        [df["paO2_measured"].min(), df["paO2_measured"].max()],
+        color="red",
+        linestyle="--",
+        linewidth=2,
+        label="Perfect Fit (y=x)",
+    )
+    ax.set_ylabel("Measured $paO_2$ in mmHg")
+    rho = r"$\rho$"
+    ax.set_title(
+        f"Measured $paO_2$ vs. { {'fio2': '$FiO_2$', 'gadrey': 'Gadreys $paO_2$', 'pAO2': '$pAO_2$'}[proxy]} values\n{rho}={round(r,4)} (CI: [{round(lower,4)}; {round(upper,4)}])"
+    )
+    trans = mtransforms.ScaledTranslation(10 / 72, -5 / 72, fig.dpi_scale_trans)
+    ax.text(
+        0.0,
+        1.0,
+        ax_label_upper,
+        transform=ax.transAxes + trans,
+        fontsize="medium",
+        verticalalignment="top",
+        fontfamily="serif",
+        bbox=dict(facecolor="0.7", edgecolor="none", pad=3.0),
+    )
+
+    ########
+    ax = axs.get(ax_label_lower)
+    sns.kdeplot(data=df, x=proxy, ax=ax, y="paO2_measured", fill=True)
+    ax.set_xlabel(
+        f"{ {'fio2': 'Fraction of inspired Oxygen ($FiO_2$)', 'gadrey': 'Gadreys $paO_2$ in mmHg', 'pAO2': '$pAO_2$ in mmHg'}[proxy]}"
+    )
+    ax.set_ylabel("Density")
+    ax.get_yaxis().set_ticks([])
+
+plt.savefig(f"plots/correlation_proxy_paO2.png", dpi=300, bbox_inches="tight")
+plt.show("all")
+plt.close("all")
+```
+
+## Cross-validated recursive feature elimination
+
+### Preparing Data
+
+#### Testing for Normality
+```{python}
+# | label: normality_of_features
+
+# test for normality to apply scaler accordingly
+normal = []
+non_normal = []
+for c in df.columns:
+    k2, p = stats.normaltest(df[c])
+    if p < 1e-3:
+        non_normal.append(c)
+    else:
+        normal.append(c)
+print(
+    f"Found {len(normal)} ({', '.join(normal)}) normally distributed features and {len(non_normal)} non-normally distributed features."
+)
+```
+
+#### Training and Test Surgeries and Labels
+```{python}
+# | label: train_test_structure
+
+# remove variables with irrelevant or future information
+
+columns_to_drop = [
+    "paO2_measured",
+    "horowitz",
+    "los",
+    "identifier",
+    "incision_closure_time",
+    "mv_time",
+    "time_to_incision",
+    "time_to_end",
+    "not_extubated",
+    "first_horowitz",
+    "last_horowitz",
+]
+
+# create training and test set
+shuffled_identifiers = df["identifier"].unique()
+np.random.seed(42)
+np.random.shuffle(shuffled_identifiers)
+
+feature_list = list(df.drop(columns_to_drop, axis=1).columns)
+with open(config.get("pickle").get(f"feature_list"), "wb") as features_pickle:
+    pickle.dump(feature_list, features_pickle)
+
+# training
+training_identifiers = shuffled_identifiers[: round(len(shuffled_identifiers) * 0.75)]
+training_df = df[df["identifier"].isin(training_identifiers)]
+training_df.reset_index(drop=True, inplace=True)
+training_groups = training_df["identifier"].values
+x_train = np.array(training_df.drop(columns_to_drop, axis=1))
+y_train = np.array(training_df["paO2_measured"])
+print(f"Training surgeries: {len(training_identifiers):,} with {len(training_df):,} datapoints.")
+
+# test
+test_identifiers = [o for o in shuffled_identifiers if o not in training_identifiers]
+test_df = df[df["identifier"].isin(test_identifiers)]
+test_df.reset_index(drop=True, inplace=True)
+test_groups = test_df["identifier"].values
+x_test = np.array(test_df.drop(columns_to_drop, axis=1))
+y_test = np.array(test_df["paO2_measured"])
+print(f"Test surgeries: {len(test_identifiers):,} with {len(test_df):,} datapoints.")
+
+group_kfold = GroupKFold(n_splits=5)
+group_kfold.random_state = 42
+```
+
+#### Scaling of dataframes
+```{python}
+# | label: new_train_test_features
+
+### scaling X and Y values ###
+scaler_x = preprocessing.MinMaxScaler()
+scaler_x.fit(x_train)
+with open(config.get("pickle").get(f"x_scaler"), "wb") as sx_file:
+    pickle.dump(scaler_x, sx_file)
+
+x_train_scaled_, x_test_scaled_ = (
+    scaler_x.transform(x_train),
+    scaler_x.transform(x_test),
+)
+
+# first column: group information (identifier), following columns: scaled features
+x_train_scaled = np.zeros((x_train_scaled_.shape[0], x_train_scaled_.shape[1] + 1))
+x_train_scaled[:, 0] = training_groups
+x_train_scaled[:, 1:] = x_train_scaled_
+
+
+x_test_scaled = np.zeros((x_test_scaled_.shape[0], x_test_scaled_.shape[1] + 1))
+x_test_scaled[:, 0] = test_groups
+x_test_scaled[:, 1:] = x_test_scaled_
+
+scaler_y = preprocessing.MinMaxScaler()
+scaler_y.fit(y_train.reshape(-1, 1))
+
+with open(config.get("pickle").get(f"y_scaler"), "wb") as sy_file:
+    pickle.dump(scaler_y, sy_file)
+
+y_train_scaled_, y_test_scaled_ = (
+    scaler_y.transform(y_train.reshape(-1, 1)),
+    scaler_y.transform(y_test.reshape(-1, 1)),
+)
+
+# first column: group information (identifier), following columns: scaled labels
+
+y_train_scaled = np.zeros((y_train_scaled_.shape[0], y_train_scaled_.shape[1] + 1))
+y_train_scaled[:, 0] = training_groups
+y_train_scaled[:, 1:] = y_train_scaled_
+
+y_train_ = np.zeros(
+    (y_train.reshape(-1, 1).shape[0], y_train.reshape(-1, 1).shape[1] + 1)
+)
+y_train_[:, 0] = training_groups
+y_train_[:, 1:] = y_train.reshape(-1, 1)
+
+x_train_ = np.zeros((x_train.shape[0], x_train.shape[1] + 1))
+x_train_[:, 0] = training_groups
+x_train_[:, 1:] = x_train
+
+y_test_scaled = np.zeros((y_test_scaled_.shape[0], y_test_scaled_.shape[1] + 1))
+y_test_scaled[:, 0] = test_groups
+y_test_scaled[:, 1:] = y_test_scaled_
+
+y_test_ = np.zeros((y_test.reshape(-1, 1).shape[0], y_test.reshape(-1, 1).shape[1] + 1))
+y_test_[:, 0] = test_groups
+y_test_[:, 1:] = y_test.reshape(-1, 1)
+
+x_test_ = np.zeros((x_test.shape[0], x_test.shape[1] + 1))
+x_test_[:, 0] = test_groups
+x_test_[:, 1:] = x_test
+
+train_test_data = {
+    "train": {
+        "group": training_groups,
+        "x": x_train_,
+        "x_scaled": x_train_scaled,
+        "y_scaled": y_train_scaled,
+        "y": y_train_,
+    },
+    "test": {
+        "group": test_groups,
+        "x_scaled": x_test_scaled,
+        "x": x_test_,
+        "y_scaled": y_test_scaled,
+        "y": y_test_,
+    },
+    "groupkfold": group_kfold,
+}
+
+with open(config.get("pickle").get(f"train_test_data"), "wb") as train_test_pickle:
+    pickle.dump(train_test_data, train_test_pickle)
+```

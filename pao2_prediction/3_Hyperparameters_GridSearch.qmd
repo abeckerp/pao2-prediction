@@ -1,0 +1,998 @@
+---
+title: "$paO_2$ Prediction in Neurosurgical Patients" 
+subtitle: "Hyperparameter Tuning using GridSearchCV"
+author: "Andrea S. Gutmann"
+date: today
+date-format: "YYYY-MM-DD"
+format:
+    html: 
+        code-fold: true
+        toc: true
+        toc-depth: 5
+        toc-expand: true
+        toc-title: Contents
+        number-sections: true
+    # pdf:
+    #    toc: true
+    #    number-sections: true
+    #    toc-location: left
+    #    code-line-numbers: true
+    #    output-ext: "pdf"
+    #    papersize: "A4"
+    #    include-in-header: 
+    #        text: |
+    #            \usepackage{fvextra}
+    #            \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
+    #            \DefineVerbatimEnvironment{OutputCode}{Verbatim}{breaklines,commandchars=\\\{\}}
+    #    include-before-body:
+    #        text: |
+    #            \RecustomVerbatimEnvironment{verbatim}{Verbatim}{
+    #            showspaces = false,
+    #            showtabs = false,
+    #            breaksymbolleft={},
+    #            breaklines
+    #            % Note: setting commandchars=\\\{\} here will cause an error 
+    #            }
+jupyter: python3
+---
+
+## Preprocessing
+
+### Loading libraries
+```{python}
+# | label: loading_libraries
+import csv, pickle, sys, time, sklearn, scipy, seaborn, statsmodels, session_info, random, math, matplotlib, os, time, yaml
+
+import numpy as np
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import scipy.stats as stats
+
+from collections import Counter
+from matplotlib.patches import Patch
+from scipy.stats import norm, sem, t
+from sklearn import preprocessing, model_selection, metrics
+from sklearn.base import clone
+from sklearn.model_selection import (
+    GroupKFold,
+    train_test_split,
+    cross_val_score,
+    GridSearchCV,
+)
+from sklearn.utils import shuffle
+from matplotlib.offsetbox import AnchoredText
+import matplotlib.transforms as mtransforms
+import matplotlib.ticker as ticker
+from pathlib import Path
+
+from ast import literal_eval
+from collections import Counter
+
+import pprint
+
+from sklearn.ensemble import GradientBoostingRegressor
+from sklearn.neighbors import KNeighborsRegressor
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.svm import SVR
+from sklearn.linear_model import LinearRegression, SGDRegressor
+from sklearn.neural_network import MLPRegressor
+from sklearn.feature_selection import RFECV, RFE
+from statsmodels.stats.outliers_influence import variance_inflation_factor
+from matplotlib.ticker import NullFormatter
+from time import perf_counter
+from datetime import datetime
+
+from itertools import chain, compress
+from functools import reduce
+
+
+from custom_functions import (
+    evaluate,
+    inverse_transform_shaped,
+    get_evaluation,
+    plot_cv_indices,
+    return_table,
+    plot_predictions,
+)
+
+matplotlib.rcParams["figure.dpi"] = 300
+
+sns.set_style('whitegrid')
+
+with open("config.yml", "r") as file:
+    config = yaml.safe_load(file)
+
+algorithm_dict = {
+    "gbr": GradientBoostingRegressor(**config.get("default_parameters").get("gbr")),
+    "knn": KNeighborsRegressor(**config.get("default_parameters").get("knn")),
+    "rfr": RandomForestRegressor(**config.get("default_parameters").get("rfr")),
+    "svr": SVR(**config.get("default_parameters").get("svr")),
+    "sgd": SGDRegressor(**config.get("default_parameters").get("sgd")),
+    "mlr": LinearRegression(**config.get("default_parameters").get("mlr")),
+    "mlp": MLPRegressor(**config.get("default_parameters").get("mlp")),
+}
+
+pp = pprint.PrettyPrinter(indent=4)
+np.random.seed(42)
+
+```
+
+```{python}
+# | label: system_information
+print(session_info.show(html=False))
+```
+
+### Loading Data
+```{python}
+# | label: loading_data
+with open(config.get("pickle").get(f"feature_list"), "rb") as feature_pickle:
+    feature_list = pickle.load(feature_pickle)
+with open(config.get("pickle").get(f"y_scaler"), "rb") as scaler_pickle:
+    scaler_y = pickle.load(scaler_pickle)
+with open(config.get("pickle").get(f"train_test_data"), "rb") as train_test_pickle:
+    train_test_data = pickle.load(train_test_pickle)
+with open(config.get("pickle").get(f"algo_data"), "rb") as algo_pickle:
+    algo_train_data_dict = pickle.load(algo_pickle)
+```
+
+### Selection of Features for Regressors 
+```{python}
+# | label: feature_selection
+feature_selection_count = {}
+for algo, sub_dict in algo_train_data_dict.items():
+    for f_num, values in sorted(sub_dict.get("cv_dict").items(), key=lambda x: x[0]):
+        if values.get("cv_score") >= config.get('cv_threshold'):
+            feature_selection_count[algo] = f_num
+            break
+
+print(f"Features selected based on RMSE >= {config.get('cv_threshold')}:\n{feature_selection_count}")
+
+for name, cv_dict_long in algo_train_data_dict.items():
+    highest = max(
+        [
+            (n_feat, details.get("cv_score"))
+            for n_feat, details in cv_dict_long.get("cv_dict").items()
+        ],
+        key=lambda x: x[1],
+    )
+    print(
+        f"Highest neg. RMSE score for {name} is reached with {highest[0]} features ({round(highest[1],5)})."
+    )
+    print(
+        f"\tSelecting {feature_selection_count.get(name)} features (neg. RMSE = {round(cv_dict_long.get('cv_dict').get(feature_selection_count.get(name)).get('cv_score'),5)})."
+    )
+    tmp_selected_features = [
+        f[0]
+        for f in cv_dict_long.get("cv_dict")
+        .get(feature_selection_count.get(name))
+        .get("features")
+    ]
+    print(f"\tThe selected features are: {', '.join(tmp_selected_features)}.\n")
+    pickle.dump(
+        tmp_selected_features, open(f"{config.get('pickle').get('selected_features')}{name}.pickle", "wb")
+    )
+    algo_train_data_dict.get(name)["selected_features"] = tmp_selected_features
+    selected_features_idx = [
+        feature_list.index(f) + 1 for f in tmp_selected_features
+    ]  # identifier is the first column
+    algo_train_data_dict.get(name)["x_train"] = train_test_data.get("train").get("x_scaled")[
+        :, list(chain([0], selected_features_idx))
+    ]
+    algo_train_data_dict.get(name)["x_train_unscaled"] = train_test_data.get(
+        "train"
+    ).get("x")[:, list(chain([0], selected_features_idx))]
+
+    algo_train_data_dict.get(name)["x_test"] = train_test_data.get("test").get(
+        "x_scaled"
+    )[:, list(chain([0], selected_features_idx))]
+    algo_train_data_dict.get(name)["x_test_unscaled"] = train_test_data.get(
+        "test"
+    ).get("x")[:, list(chain([0], selected_features_idx))]
+    
+    algo_train_data_dict.get(name)["x_test"] = train_test_data.get("test").get("x_scaled")[
+        :, list(chain([0], selected_features_idx))
+    ]
+
+with open(config.get("pickle").get(f"completed_train_data"), "wb") as algo_pickle:
+    pickle.dump(algo_train_data_dict, algo_pickle)
+
+```
+
+## Descriptive Statistics
+```{python}
+# | label: descriptives_prep
+# | echo: false
+
+with open(config.get("pickle").get(f"completed_data"), "rb") as ml_pickle:
+    desc_df = pickle.load(ml_pickle)
+
+multiple_meas = (
+    desc_df[config.get("multi_measurements_columns")]
+    .describe(include="all")
+    .reindex(sorted(config.get("multi_measurements_columns")), axis=1)
+)
+
+single_meas = (
+    desc_df[config.get("single_measurements_columns")+['creatinine']]
+    .groupby(["identifier"])
+    .aggregate("mean")
+    .describe(include="all")
+    .reindex(sorted(config.get("single_measurements_columns")+['creatinine']), axis=1)
+)
+
+descriptive_df = multiple_meas.join(single_meas).drop("identifier", axis=1)
+```
+
+### Table 3
+```{python}
+# | label: descriptives
+
+display(
+    descriptive_df.T.rename_axis("my_idx")
+    .sort_values(["count", "my_idx"])
+    .round(2)
+    .astype({"count": "int"})
+)
+descriptive_df.T.rename_axis("my_idx").sort_values(["count", "my_idx"]).round(2).astype({"count": "int"}).to_csv(config.get('csv').get(f"descriptives"))
+
+print("ASA classes:")
+for asa, count in sorted(Counter(desc_df.groupby("identifier").first().reset_index().loc[:, "asa"].values).items()):
+    print(f"ASA class {asa}: {count} patients.")
+
+```
+
+### Table 4 Preparation Train Data
+```{python}
+# | label: descriptives_train
+
+multiple_meas_train = (
+    desc_df.loc[desc_df["identifier"].isin(train_test_data.get("train").get("group")),config.get("multi_measurements_columns")]
+    .describe(include="all")
+    .reindex(sorted(config.get("multi_measurements_columns")), axis=1)
+)
+
+single_meas_train = (
+    desc_df.loc[desc_df["identifier"].isin(train_test_data.get("train").get("group")),config.get("single_measurements_columns") + ['creatinine']]
+    .groupby(["identifier"])
+    .aggregate("mean")
+    .describe(include="all")
+    .reindex(sorted(config.get("single_measurements_columns")+['creatinine']), axis=1)
+)
+
+descriptive_df_train = multiple_meas_train.join(single_meas_train).drop("identifier", axis=1)
+
+
+print("ASA classes for training set:")
+for asa, count in sorted(Counter(desc_df.groupby("identifier").first().reset_index().loc[desc_df["identifier"].isin(train_test_data.get("train").get("group")), "asa"].values).items()):
+    print(f"ASA class {asa}: {count} patients.")
+
+```
+
+### Table 4 Preparation Test Data
+```{python}
+# | label: descriptives_test
+
+multiple_meas_test = (
+    desc_df.loc[desc_df["identifier"].isin(train_test_data.get("test").get("group")),config.get("multi_measurements_columns")]
+    .describe(include="all")
+    .reindex(sorted(config.get("multi_measurements_columns")), axis=1)
+)
+
+single_meas_test = (
+    desc_df.loc[desc_df["identifier"].isin(train_test_data.get("test").get("group")),config.get("single_measurements_columns")+['creatinine']]
+    .groupby(["identifier"])
+    .aggregate("mean")
+    .describe(include="all")
+    .reindex(sorted(config.get("single_measurements_columns")+['creatinine']), axis=1)
+)
+
+descriptive_df_test = multiple_meas_test.join(single_meas_test).drop("identifier", axis=1)
+
+
+print("ASA classes for test set:")
+for asa, count in sorted(Counter(desc_df.groupby("identifier").first().reset_index().loc[desc_df["identifier"].isin(train_test_data.get("test").get("group")), "asa"].values).items()):
+    print(f"ASA class {asa}: {count} patients.")
+
+```
+
+### Table 4
+```{python}
+desc_tt_df = descriptive_df_test.add_suffix('_test').join(descriptive_df_train.add_suffix('_train'))
+
+display(
+    desc_tt_df.T.rename_axis("my_idx")
+    .sort_values(["my_idx", "count"])
+    .round(2)
+    .astype({"count": "int"})
+)
+
+desc_tt_df.T.rename_axis("my_idx").sort_values(["my_idx", "count"]).round(2).astype({"count": "int"}).to_csv(config.get('csv').get('descriptives_tt'))
+```
+
+## Base Model Evaluation
+```{python}
+# | label: base_models
+
+eval_list = []
+plot_data = {}
+
+for name, base_model in sorted(algorithm_dict.items(), key = lambda x:x[0]):
+    cv_eval_dict = {}
+
+    # for plotting purposes
+    plot_x_axis_data = []  # actual
+    plot_y_axis_data = []  # predicted
+
+    tmp_x_train = algo_train_data_dict.get(name).get("x_train")[:, 1:]
+    tmp_y_train = train_test_data.get("train").get("y_scaled")[:, 1]
+    tmp_x_test = algo_train_data_dict.get(name).get("x_test")[:, 1:]
+    tmp_y_test = train_test_data.get("test").get("y_scaled")[:, 1]
+    group_kfold = train_test_data.get("groupkfold")
+    test_groups = train_test_data.get("test").get("group")
+    train_groups = train_test_data.get("train").get("group")
+
+ 
+    plot_x_axis_data.extend(
+        list(inverse_transform_shaped(scaler_y, np.array(tmp_y_test)))
+    )
+    fitted_tmp_base_model = base_model.fit(tmp_x_train, tmp_y_train)
+    y_tmp_base_pred_scaled = fitted_tmp_base_model.predict(tmp_x_test)
+    plot_y_axis_data.extend(
+        list(inverse_transform_shaped(scaler_y, np.array(y_tmp_base_pred_scaled)))
+    )
+    cv_eval_dict[0] = evaluate(
+        inverse_transform_shaped(scaler_y, np.array(y_tmp_base_pred_scaled)),
+        train_test_data.get("test").get("y"),
+        np.array(tmp_x_test).shape[1],
+    )
+
+
+    eval_dict = {
+        "mape": np.mean([sd.get("mape") for sd in cv_eval_dict.values()]),
+        "mae": np.mean([sd.get("mae") for sd in cv_eval_dict.values()]),
+        "rmse": np.mean([sd.get("rmse") for sd in cv_eval_dict.values()]),
+        "adjusted_r2": np.mean([sd.get("adjusted_r2") for sd in cv_eval_dict.values()]),
+        "rho": np.mean([sd.get("rho") for sd in cv_eval_dict.values()]),
+        "ci_rho_lower": np.mean(
+            [sd.get("ci_rho_lower") for sd in cv_eval_dict.values()]
+        ),
+        "ci_rho_upper": np.mean(
+            [sd.get("ci_rho_upper") for sd in cv_eval_dict.values()]
+        ),
+    }
+
+    eval_dict["model"] = str(base_model).split("(")[0]
+    eval_list.append(eval_dict)
+
+    plot_data[name] = {"x": plot_x_axis_data, "y": plot_y_axis_data}
+
+
+eval_df = pd.DataFrame.from_dict(eval_list)
+with open(config.get("pickle").get(f"base_models"), "wb") as base_pickle:
+    pickle.dump(eval_df, base_pickle)
+
+print(eval_df.round(4).to_string())
+```
+
+```{python}
+# | label: base_model_evaluation
+# | fig-cap: $paO_2$ Prediction by different Regressors with default parameters"
+if len(list(filter(lambda x: x is not None, eval_list))) > 5:
+    eval_df = pd.DataFrame.from_dict(eval_list)
+
+    fig, axs = plt.subplot_mosaic([['a.', 'b.', 'c.'], ['d.', 'e.', 'f.'], ['.', 'h.', '.']][:int(np.ceil(len(algorithm_dict.keys())/2))], layout = 'constrained', figsize=(3 * config.get('plot_size'), int(np.ceil(len(algorithm_dict.keys())/2)) * config.get('plot_size')/1.5),)
+
+    fig.set_tight_layout(True)
+    fig.suptitle(
+        "Measured vs. predicted $paO_2$ values by different regressors with default parameters\n"
+    )
+
+    for ax_label, (idx, (name, title)) in zip(axs.keys(), enumerate(config.get("plot_titles").items())):
+        tmp_eval_dict = eval_list[idx]
+        ax = axs.get(ax_label)
+        ax.scatter(
+            plot_data[name].get("x"), plot_data[name].get("y"), edgecolors=(0, 0, 0)
+        )
+        max_val = 610  # max(y_test.max(), y_pred.max())
+        ax.set_xlim(0, max_val)
+        ax.set_ylim(0, max_val)
+        ax.plot([0, max_val], [0, max_val], "k--", lw=2)
+        ax.set_xlabel("Measured $paO_2$ in mmHg")
+        ax.set_ylabel("Predicted $paO_2$ in mmHg")
+        ax.set_title(
+            f"{title}: {feature_selection_count.get(name)} features,\nMAPE={round(tmp_eval_dict['mape'],2)} %, MAE={round(tmp_eval_dict['mae'],2)},\nRMSE={round(tmp_eval_dict['rmse'],2)}, adj. $R^2$={round(tmp_eval_dict['adjusted_r2'],4)}"
+        )
+        trans = mtransforms.ScaledTranslation(10/72, -5/72, fig.dpi_scale_trans)
+        ax.text(0.0, 1.0, ax_label, transform=ax.transAxes + trans,
+            fontsize='medium', verticalalignment='top', fontfamily='serif',
+            bbox=dict(facecolor='0.7', edgecolor='none', pad=3.0))
+
+    plt.savefig(f"plots/measured_predicted_base.png", dpi=300, bbox_inches="tight")
+    plt.show()
+    plt.close()
+```
+
+## Hyperparameter Tuning 
+
+### Hyperparameters
+```{python}
+# | label: hyperparameters
+
+gbr_hp_candidates = [
+    {
+        "loss": [
+            "squared_error",
+            #"absolute_error",
+            "huber",
+            "quantile",
+        ],
+        "learning_rate": np.linspace(0.01, 0.8, 5),
+        "n_estimators": [50, 80, 100, 120, 150],
+        "min_samples_leaf": [1, 2, 3, 4],
+        "max_depth": [2, 3, 4, 5, 6, None],
+    }
+]
+
+k = int(np.sqrt(len(train_test_data.get("train").get("y"))) / 2)
+knn_hp_candidates = [
+    {
+        "n_neighbors": np.arange(5, k, 8),
+        "weights": ["uniform", "distance"],
+        "algorithm": ["ball_tree", "kd_tree", "brute", "auto"],
+        "leaf_size": np.arange(5, k, 5),
+        "metric": ["minkowski", "l1", "l2"],
+        "p": [1, 2],
+    }
+]
+
+rfr_hp_candidates = [
+    {
+        "n_estimators": [int(x) for x in np.linspace(start=50, stop=200, num=5)],
+        "max_features": ["sqrt", "log2", 0.6, 1.0],
+        "max_depth": [int(x) for x in np.linspace(3, 30, 5)],
+        "min_samples_split": [int(x) for x in np.linspace(2, 6, 3)],
+        "min_samples_leaf": np.arange(1, 10, 3),
+        "bootstrap": [True],
+        "criterion": ["squared_error", "friedman_mse"] 
+    }
+]
+
+svr_hp_candidates = [
+    {
+        "kernel": ["rbf", "sigmoid"],
+        "gamma": ["auto", "scale"],
+        "coef0": [0.0, 0.1, 0.2],
+        "tol": [0.0001, 0.001, 0.01, 0.1, 1.0],
+        "C": [0.01, 0.1, 1.0, 10, 100],
+        "epsilon": [0.001, 0.01, 0.1, 1.0, 10],
+        "cache_size": [10000],
+        "shrinking": [True, False],
+    },
+]
+
+mlr_hp_candidates = [
+    {
+        "fit_intercept": [False, True],
+        "copy_X": [False, True],
+        "positive": [False, True],
+    }
+]
+
+
+mlp_hp_candidates = [
+    {
+        "hidden_layer_sizes": [(100,), (256, 128 ), (64,), (256, 128, 64,), (64, 32,),],
+        "activation": ['relu', 'tanh', 'logistic'],
+        "learning_rate_init": [0.001, 0.0001],
+        "solver": ['sgd'],
+        "batch_size": ['auto', 64, 128],
+        "early_stopping": [True],
+        "max_iter": [350],
+        "alpha": [0.0001, 0.001],
+        "learning_rate": ['constant', 'invscaling', 'adaptive'], 
+        "learning_rate_init": [0.001, 0.0001], 
+        "power_t": [0.3, 0.5, 0.7],
+        "tol": [0.0001, 0.001], 
+        "momentum": [0.5, 0.7, 0.9],
+    },
+    {
+        "hidden_layer_sizes": [(100,), (256, 128 ), (64,), (256, 128, 64,), (64, 32,),],
+        "activation": ['relu', 'tanh', 'logistic'],
+        "learning_rate_init": [0.001, 0.0001],
+        "solver": ['sgd'],
+        "batch_size": ['auto', 64, 128],
+        "early_stopping": [True],
+        "max_iter": [500],
+        "alpha": [0.0001, 0.001],
+        "learning_rate": ['constant', 'invscaling', 'adaptive'], 
+        "learning_rate_init": [0.001, 0.0001], 
+        "power_t": [0.3, 0.5, 0.7],
+        "tol": [0.0001, 0.001], 
+        "momentum": [0.5, 0.7, 0.9],
+    },
+    {
+        "hidden_layer_sizes": [(100,), (256, 128 ), (64,), (256, 128, 64,), (64, 32,),],
+        "activation": ['relu', 'tanh', 'logistic'],
+        "learning_rate_init": [0.001, 0.0001],
+        "solver": ['adam'],
+        "batch_size": ['auto', 64, 128],
+        "early_stopping": [True],
+        "max_iter": [200, 350, 500],
+        "alpha": [0.0001, 0.001],
+        "learning_rate_init": [0.001, 0.0001], 
+        "tol": [0.0001, 0.001], 
+    },
+    {
+        "hidden_layer_sizes": [(100,), (256, 128 ), (64,), (256, 128, 64,), (64, 32,),],
+        "activation": ['relu', 'tanh', 'logistic'],
+        "learning_rate_init": [0.001, 0.0001],
+        "solver": ['lbfgs'],
+        "batch_size": ['auto', 64, 128],
+        "early_stopping": [True],
+        "max_iter": [200, 350, 500],
+        "alpha": [0.0001, 0.001],
+        "tol": [0.0001, 0.001], 
+    }
+]
+
+alpha_values_sgd = [0.00001, 0.0001, 0.001, 0.01, 0.1]
+tol_values_sgd = [0.0001, 0.001, 0.01, 0.1]
+l1_ratio_values_sgd = [0.1, 0.15, 0.2, 0.5]
+sgd_hp_candidates = [
+    {
+        "loss": ["squared_error"],
+        "penalty": [
+            None,
+            "l2",
+            "l1",
+        ],
+        "alpha": alpha_values_sgd,
+        "tol": tol_values_sgd,
+        "learning_rate": ["constant", "optimal", "invscaling", "adaptive"],
+        "eta0": [0.001, 0.01, 0.1],
+        "power_t": [0.1, 0.25, 0.5, 0.7],
+        "epsilon": [0.01, 0.1, 0.5],
+    },
+    {
+        "loss": [
+            "epsilon_insensitive",
+            "squared_epsilon_insensitive",
+        ],
+        "penalty": [
+            None,
+            "l2",
+            "l1",
+        ],
+        "alpha": alpha_values_sgd,
+        "tol": tol_values_sgd,
+        "epsilon": [0.01, 0.1, 0.5],
+        "learning_rate": ["constant", "optimal", "invscaling", "adaptive"],
+        "eta0": [0.001, 0.01, 0.1],
+        "power_t": [0.1, 0.25, 0.5, 0.7],
+    },
+    {
+        "loss": ["squared_error"],
+        "penalty": ["elasticnet"],
+        "alpha": alpha_values_sgd,
+        "l1_ratio": l1_ratio_values_sgd,  # only if penalty is elasticnet
+        "tol": tol_values_sgd,
+        "learning_rate": ["constant", "optimal", "invscaling", "adaptive"],
+        "eta0": [0.001, 0.01, 0.1],
+        "power_t": [0.1, 0.25, 0.5, 0.7],
+        "epsilon": [0.01, 0.1, 0.5],
+    },
+    {
+        "loss": [
+            "epsilon_insensitive",
+            "squared_epsilon_insensitive",
+        ],
+        "penalty": ["elasticnet"],
+        "alpha": alpha_values_sgd,
+        "l1_ratio": l1_ratio_values_sgd,  # only if penalty is elasticnet
+        "tol": tol_values_sgd,
+        "epsilon": [0.01, 0.1, 0.5],
+        "learning_rate": ["constant", "optimal", "invscaling", "adaptive"],
+        "eta0": [0.001, 0.01, 0.1],
+        "power_t": [0.1, 0.25, 0.5, 0.7],
+    },
+]
+
+param_grid = {
+    "gbr": gbr_hp_candidates,
+    "knn": knn_hp_candidates,
+    "rfr": rfr_hp_candidates,
+    "svr": svr_hp_candidates,
+    "mlr": mlr_hp_candidates,
+    "sgd": sgd_hp_candidates,
+    "mlp": mlp_hp_candidates,
+}
+pp.pprint(param_grid)
+
+with open(config.get("pickle").get("hyperparameters"), "wb") as params_pickle:
+    pickle.dump(param_grid, params_pickle)
+
+for name, candidates in param_grid.items():
+    print(f"Fitting {len(candidates)} for {name}.")
+
+```
+
+The 3_1_hpc_script.py was executed on a HPC with the following specifications:
+
+- CPUs per task: 128
+- RAM: 128Gb
+- Python 3.10.12 (main, Jun 11 2023, 05:26:28) [GCC 11.4.0]
+- Linux-5.15.0-127-generic-x86_64-with-glibc2.35
+
+Packages:
+
+- joblib              1.3.2
+- numpy               1.26.0
+- pandas              2.1.1
+- scipy               1.11.4
+- session_info        1.0.0
+- sklearn             1.3.1
+
+Script arguments:
+
+- number of threads = 16
+- number of parallel jobs = 16
+
+----------
+
+### Evaluation of all Models
+
+Read cv_results and define best estimator per slice.
+
+```{python}
+# | label: inspect_cv_results
+
+for name, algo in algorithm_dict.items():
+    #print(name)
+    algo_copy = clone(algo)
+    for i in range(10):
+        csv_path = Path(f"{config.get('pickle').get('grid_search_cv')}{name}{i}.csv")
+        estimator_path = Path(f"{config.get('pickle').get('estimator')}{name}{i}.pickle")
+        if csv_path.exists():
+            #print(i)
+            with open(csv_path, "r") as cv_results:
+                cv_df = pd.DataFrame(pd.read_csv(cv_results, sep= ','))
+
+            cv_df['params'] = cv_df['params'].apply(literal_eval) 
+            cv_df = cv_df.dropna()
+
+            test_ranks = cv_df.loc[:,["rank_test_RMSE", "rank_test_adjR2"]].values
+
+            sum_rows = np.sum(test_ranks, axis=1)
+            lowest_sum_count = sorted(Counter(sum_rows).items(), key = lambda x: x[0])[0]
+            if lowest_sum_count[1] > 1:
+                print(f"Found more than one lowest sum ({lowest_sum_count[0]}): {lowest_sum_count[1]}.")
+                # np.append(test_ranks, sum_rows.reshape(test_ranks.shape[0],1), axis=1)
+                lowest_indices = np.where(sum_rows == sum_rows.min()) 
+                selected_ranks = sorted(test_ranks[lowest_indices], key = lambda x: [x[0], x[1]])[0] # first RMSE, then adj R2
+                min_row = np.where(np.all(test_ranks==selected_ranks, axis=1))[0][0]
+            else:
+                min_row = np.argmin(sum_rows)
+            
+            min_tuple = tuple(test_ranks[min_row])
+
+            best_model = cv_df.loc[
+                (cv_df["rank_test_RMSE"] == min_tuple[0]) &
+                #(cv_df["rank_test_MAPE"] == min_tuple[1]) &
+                #(cv_df["rank_test_MAE"] == min_tuple[2]) &
+                (cv_df["rank_test_adjR2"] == min_tuple[1]),
+                :].sort_values(by='mean_score_time').reset_index().iloc[0]
+            best_params = best_model['params']
+
+            print(f"""\n\nBest rank-combination for {name} (slice {i}) is {min_tuple}, resulting in the following test scores:
+                - neg. RMSE: {round(best_model['mean_test_RMSE'],4)}
+                - adj. R2: {round(best_model['mean_test_adjR2'],4)}
+            """)
+
+            estimator = algo_copy.set_params(**best_params)
+            with open(estimator_path, "wb") as estimator_pickle:
+                pickle.dump(estimator, estimator_pickle)
+
+```
+
+Evaluate different slices and select the best one.
+
+```{python}
+# | label: loading_core_data
+
+eval_list = []
+slices = {
+    name: i
+    for name in algorithm_dict.keys()
+    for i in range(50)
+    if Path(f"{config.get("pickle").get('estimator')}{name}{i}.pickle").exists()
+}
+best_slice = {name: 0 for name in algorithm_dict.keys()}
+
+for name, slice_num in slices.items():
+    eval_dict = {}
+    first = True
+    for s in range(slice_num + 1):
+        print(name, s)
+        estimator_path = Path(f"{config.get("pickle").get('estimator')}{name}{s}.pickle")
+        if not estimator_path.exists():
+            print(f"No cv-results for {name} with slice {s} found. Continue...")
+            continue
+        with open(
+            estimator_path, "rb"
+        ) as estimator_pickle:
+            estimator = pickle.load(estimator_pickle)
+
+        cv_eval_dict = {}
+        plot_data = {"x": [], "y": []}
+        x_test = algo_train_data_dict.get(name).get("x_test")[:, 1:]
+        y_test = train_test_data.get("test").get("y_scaled")
+        x_train = algo_train_data_dict.get(name).get("x_train")[:, 1:]
+        y_train = train_test_data.get("train").get("y_scaled")
+        group_kfold = train_test_data.get("groupkfold")
+        test_groups = train_test_data.get("test").get("group")
+
+        plot_data["x"] = train_test_data.get("test").get("y")[:,1]
+        fitted_tmp_model = estimator.fit(x_train, y_train[:,1])
+
+        with open(Path(f"{config.get('pickle').get('estimator')}{name}_{s}_fitted.pickle"), "wb") as e: 
+            pickle.dump(fitted_tmp_model, e)
+
+        y_tmp_pred_scaled = fitted_tmp_model.predict(x_test)
+        y_tmp_pred = inverse_transform_shaped(scaler_y, y_tmp_pred_scaled)
+        plot_data["y"] = list(y_tmp_pred)
+        cv_eval_dict[0] = evaluate(y_tmp_pred, train_test_data.get("test").get("y"), x_train.shape[1])
+
+        s_eval_dict = {
+            "mape": np.mean([sd.get("mape") for sd in cv_eval_dict.values()]),
+            "mae": np.mean([sd.get("mae") for sd in cv_eval_dict.values()]),
+            "rmse": np.mean([sd.get("rmse") for sd in cv_eval_dict.values()]),
+            "adjusted_r2": np.mean(
+                [sd.get("adjusted_r2") for sd in cv_eval_dict.values()]
+            ),
+            "rho": np.mean([sd.get("rho") for sd in cv_eval_dict.values()]),
+            "ci_rho_lower": np.mean(
+                [sd.get("ci_rho_lower") for sd in cv_eval_dict.values()]
+            ),
+            "ci_rho_upper": np.mean(
+                [sd.get("ci_rho_upper") for sd in cv_eval_dict.values()]
+            ),
+            "model": str(algorithm_dict.get(name)).split("(")[0],
+        }
+        print(f"\t{pp.pformat(s_eval_dict)}")
+        if first:
+            eval_dict["eval"] = s_eval_dict
+            eval_dict["plot"] = plot_data
+            first = False
+            best_slice[name] = s
+        else:
+            if (s_eval_dict.get("rmse") <= eval_dict.get("eval").get("rmse")) and (
+                s_eval_dict.get("adjusted_r2")
+                >= eval_dict.get("eval").get("adjusted_r2")
+            ):
+                eval_dict["eval"] = s_eval_dict
+                eval_dict["plot"] = plot_data
+                best_slice[name] = s
+
+    with open(f"{config.get('pickle').get('plot_data')}{name}.pickle", "wb") as plot_pickle:
+        pickle.dump(eval_dict.get("plot"), plot_pickle)
+    with open(f"{config.get('pickle').get('tuned_models_eval')}{name}.pickle", "wb") as eval_pickle:
+        pickle.dump(eval_dict.get("eval"), eval_pickle)
+
+    eval_list.append(eval_dict.get("eval"))
+
+with open(config.get('pickle').get('slices'), "wb") as slice_pickle:
+    pickle.dump(best_slice, slice_pickle)
+
+```
+
+Appendix 4
+```{python}
+# | label: appendix4
+
+print(f"\nBest slices and parameters:")
+for name, i in best_slice.items():
+    print(name, i)
+    estimator_path = Path(f"{config.get('pickle').get('estimator')}{name}{i}.pickle")
+    if not estimator_path.exists():
+        print(f"No cv-results for {name} with slice {s} found. Continue...")
+        continue
+    with open(estimator_path, "rb") as estimator_pickle:
+        estimator = pickle.load(estimator_pickle)
+
+    for key, value in estimator.get_params().items():
+        if value != algorithm_dict.get(name).get_params().get(key):
+            print(f"Tuned param '{key}' changed from {algorithm_dict.get(name).get_params().get(key)} to {value}.")
+    print(f"Best parameters are:\n{pp.pformat(estimator.get_params())},\nstandard parameters are:\n{pp.pformat(algorithm_dict.get(name).get_params())}")
+
+    table = pd.DataFrame(index=algorithm_dict.get(name).get_params().keys())
+    # add default params 
+    table["default_params"] = [p if p is not None else '' for p in algorithm_dict.get(name).get_params().values()]
+    for slice in range(len(param_grid.get(name))):
+        table[f"hyperparameters{slice}"] = [param_grid.get(name)[slice].get(i, '') for i in table.index]
+    table["best_parameters"] = [estimator.get_params().get(i,'') for i in table.index]
+    table.to_csv(f"data/out/all_parameters_{name}.csv")
+    table = table.style.set_caption(config.get("plot_titles").get(name))
+    display(table)
+    
+```
+
+```{python}
+# | label: tuned_model_evaluation
+# | fig-cap: $paO_2$ Prediction by different Regressors
+
+eval_df = pd.DataFrame.from_dict(eval_list).sort_values("model")
+with open(config.get("pickle").get(f"tuned_models"), "wb") as eval_pickle:
+    pickle.dump(eval_df, eval_pickle)
+
+# fig, axs = plt.subplots(nrows=3, ncols=2, figsize=(2 * config.get('plot_size'), 3 * config.get('plot_size')))
+fig, axs = plt.subplot_mosaic([['a.', 'b.', 'c.'], ['d.', 'e.', 'f.'], ['.', 'h.', '.']][:int(np.ceil(len(algorithm_dict.keys())/2))], layout = 'constrained', figsize=(3 * config.get('plot_size'), int(np.ceil(len(algorithm_dict.keys())/2)) * config.get('plot_size')/1.5),)
+fig.set_tight_layout(True)
+fig.suptitle(
+    "Measured vs. predicted $paO_2$ values by different regressors with tuned parameters\n"
+)
+
+# get global maximum of absolute errors
+abs_errors = []
+for name in config.get("plot_titles").keys():
+    plot_path = Path(f"data/3_06_plot_data_{name}.pickle")
+    if plot_path.exists():
+        with open(plot_path, "rb") as plot_pickle:
+            plot_data = pickle.load(plot_pickle)
+        y_points = plot_data.get("y")
+        x_points = plot_data.get("x")
+        abs_errors.append(max(abs(np.array(y_points)-np.array(x_points))))
+global_max_error = max(abs_errors)
+
+# plot
+for ax_label, (idx, (name, title)) in zip(
+    axs.keys(), enumerate(config.get("plot_titles").items())
+):
+    plot_path = Path(f"data/3_06_plot_data_{name}.pickle")
+    if plot_path.exists():
+        with open(plot_path, "rb") as plot_pickle:
+            plot_data = pickle.load(plot_pickle)
+        y_points = plot_data.get("y")
+        x_points = plot_data.get("x")
+        print(
+            f"{name}: {len(x_points)} data points for x, {len(y_points)} data points for y"
+        )
+        tmp_eval_dict = eval_df.loc[
+            eval_df.model == str(algorithm_dict.get(name)).split("(")[0], :
+        ].to_dict(orient="records")[0]
+
+        ax = axs.get(ax_label)
+        ## ax.scatter(x_points, y_points, edgecolors=(0, 0, 0))
+
+        # Scatter plot
+        scatter = ax.scatter(
+            x_points,
+            y_points,
+            c=abs(x_points - y_points),
+            cmap="viridis",
+            edgecolor="k",
+            s=30,
+            alpha=0.8,
+            vmin=0, 
+            vmax=global_max_error
+        )
+        # Add a color bar
+        cbar = fig.colorbar(scatter, ax=ax)
+        cbar.set_label("Absolute Error", rotation=270, labelpad=15)
+        ax.grid(visible=True, which="major", linestyle="--", linewidth=0.5, alpha=0.7)
+
+        max_val = 610  # max(y_test.max(), y_pred.max())
+        ax.set_xlim(0, max_val)
+        ax.set_ylim(0, max_val)
+        ax.plot(
+            [0, max_val],
+            [0, max_val],
+            color="red",
+            linestyle="--",
+            linewidth=2,
+            label="Perfect Fit (y=x)",
+        )
+        ax.set_xlabel("Measured $paO_2$ in mmHg")
+        ax.set_ylabel("Predicted $paO_2$ in mmHg")
+        ax.set_title(
+            f"{title}: {feature_selection_count.get(name)} features,\nMAPE={round(tmp_eval_dict['mape'],2)} %, MAE={round(tmp_eval_dict['mae'],2)},\nRMSE={round(tmp_eval_dict['rmse'],2)}, adj. $R^2$={round(tmp_eval_dict['adjusted_r2'],4)}"
+        )
+
+        trans = mtransforms.ScaledTranslation(10 / 72, -5 / 72, fig.dpi_scale_trans)
+        ax.text(
+            0.0,
+            1.0,
+            ax_label,
+            transform=ax.transAxes + trans,
+            fontsize="medium",
+            verticalalignment="top",
+            fontfamily="serif",
+            bbox=dict(facecolor="0.7", edgecolor="none", pad=3.0),
+        )
+
+plt.savefig(f"plots/measured_predicted.png", dpi=300, bbox_inches="tight")
+plt.show()
+```
+
+### Table 1
+```{python}
+# | label: table_2
+base_eval_df = pickle.load(open(config.get("pickle").get(f"base_models"), "rb"))
+tuned_eval_df = pickle.load(open(config.get("pickle").get(f"tuned_models"), "rb"))
+base_eval_df = (
+    base_eval_df.set_index("model")
+    .round(
+        {
+            "rho": 4,
+            "ci_rho_lower": 4,
+            "ci_rho_upper": 4,
+            "adjusted_r2": 4,
+            "mae": 2,
+            "mape": 2,
+            "rmse": 2,
+        }
+    )
+    .astype(
+        {
+            "rho": "str",
+            "ci_rho_lower": "str",
+            "ci_rho_upper": "str",
+        }
+    )
+)
+tuned_eval_df = (
+    tuned_eval_df.set_index("model")
+    .round(
+        {
+            "rho": 4,
+            "ci_rho_lower": 4,
+            "ci_rho_upper": 4,
+            "adjusted_r2": 4,
+            "mae": 2,
+            "mape": 2,
+            "rmse": 2,
+        }
+    )
+    .astype({"rho": "str", "ci_rho_lower": "str", "ci_rho_upper": "str"})
+)
+base_eval_df["spearman"] = (
+    base_eval_df["rho"]
+    + " ["
+    + base_eval_df["ci_rho_lower"]
+    + "; "
+    + base_eval_df["ci_rho_upper"]
+    + "]"
+)
+base_eval_df = base_eval_df.drop(["rho", "ci_rho_lower", "ci_rho_upper"], axis=1)
+tuned_eval_df["spearman"] = (
+    tuned_eval_df["rho"]
+    + " ["
+    + tuned_eval_df["ci_rho_lower"]
+    + "; "
+    + tuned_eval_df["ci_rho_upper"]
+    + "]"
+)
+
+tuned_eval_df["adjusted_r2_rank"] = (
+    tuned_eval_df["adjusted_r2"].rank(ascending=False).astype(int)
+)
+tuned_eval_df["mae_rank"] = tuned_eval_df["mae"].rank(ascending=True).astype(int)
+tuned_eval_df["mape_rank"] = tuned_eval_df["mape"].rank(ascending=True).astype(int)
+tuned_eval_df["rmse_rank"] = tuned_eval_df["rmse"].rank(ascending=True).astype(int)
+tuned_eval_df["spearman_rank"] = tuned_eval_df["rho"].rank(ascending=False).astype(int)
+
+tuned_eval_df = tuned_eval_df.drop(["rho", "ci_rho_lower", "ci_rho_upper"], axis=1)
+
+display(
+    pd.concat([base_eval_df.T, tuned_eval_df.T], keys=["Base Model", "Tuned Model"])
+    .swaplevel()
+    .sort_index(level=[0, 1], ascending=[True, True])
+    # .T
+)
+
+pd.concat(
+    [base_eval_df.T, tuned_eval_df.T], keys=["Base Model", "Tuned Model"]
+).swaplevel().sort_index(level=[0, 1], ascending=[True, True]).to_csv(
+    config.get("csv").get(f"model_comparison")
+)
+```

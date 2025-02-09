@@ -1,0 +1,122 @@
+version: 2.0
+
+best_regressor: sgd
+
+csv:
+  binning: "data/out/model_binning.csv"
+  descriptives: "data/out/descriptives.csv"
+  descriptives_tt: "data/out/descriptives_train_test.csv"
+  model_comparison: "data/out/model_comparison.csv"
+  multi_times_measurements_pseudo: "data/1_00_multi_time_measurements_pseudo.csv"
+  one_time_measurements_pseudo: "data/1_00_one_time_measurements_pseudo.csv"
+  multi_times_measurements: "data/1_00_multi_time_measurements.csv"
+  one_time_measurements: "data/1_00_one_time_measurements.csv"
+
+cv_threshold: -0.081
+
+default_parameters:
+  gbr: { random_state: 42 }
+  knn: {}
+  mlp: { random_state: 42 }
+  mlr: {}
+  rfr: { random_state: 42 }
+  sgd: { max_iter: 100_000_000, random_state: 42 }
+  svr: { max_iter: -1 }
+
+multi_measurements_columns:
+  - idx
+  - fio2
+  - co2
+  - spo2
+  - rmv
+  - respiratory_rate
+  - compliance
+  - paO2_measured
+  - last_horowitz
+  - pAO2
+  - systolic
+  - diastolic
+  - mean_art_press
+  - heart_rate
+  - temperature
+  - ph
+  - hemoglobin
+  - gadrey
+  - timepoint_intraop
+
+pickle:
+  algo_data: "data/2_02_algo_train_data_dict.pickle"
+  base_models: "data/3_03_base_model_evaluation.pickle"
+  completed_data: "data/1_02_ml_data.pickle"
+  completed_train_data: "data/3_02_completed_train_data.pickle"
+  estimator: "data/3_05_estimator_"
+  estimator_lh_fitted: "data/5_01_estimator_lh_fitted.pickle"
+  feature_list: "data/1_03_feature_list.pickle"
+  grid_search_cv: "data/out/cv_results_"
+  hyperparameters: "data/3_04_hyperparameters.pickle"
+  plot_data: "data/3_06_plot_data_"
+  rfe_cv_scores: "data/2_01_cv_scores_dict_"
+  rmse_features: "data/4_01_rmse_cv_dict_"
+  rmse_features_fh: "data/5_01_rmse_cv_dict_fh_"
+  selected_features: "data/3_01_selected_features_"
+  slices: "data/3_08_slices.pickle"
+  train_data: "data/1_01_train_data.pickle"
+  train_test_data: "data/1_05_train_test_data.pickle"
+  tuned_models: "data/3_09_tuned_model_evaluation.pickle"
+  tuned_models_eval: "data/3_07_eval_dict_"
+  x_scaler: "data/1_04_scaler_x.pickle"
+  y_scaler: "data/1_04_scaler_y.pickle"
+
+plot_size: 4
+
+plot_titles:
+  gbr: Gradient Boosting Regression Tree
+  knn: KNN Regressor
+  sgd: Linear Model with SGD
+  mlp: Multi-layer Perceptron
+  rfr: Random Forest Regressor
+  svr: Support Vector Regression
+  mlr: Multivariable Linear Regression
+
+single_measurements_columns:
+  - age
+  - already_intubated
+  - asa
+  - bmi
+  - first_horowitz
+  - identifier
+  - incision_closure_time
+  - los
+  - mv_time
+  - not_extubated
+  - sex_male
+  - time_to_end
+  - time_to_incision
+
+column_names:
+  age: Age
+  already_intubated: Mechanically ventilated before surgery
+  asa: ASA class
+  bmi: BMI
+  co2: $CO_2$
+  compliance: Compliance
+  creatinine: Preoperative creatinine value
+  diastolic: Diastolic blood pressure
+  fio2: $FiO_2$
+  first_horowitz: Initial Horowitz index
+  gadrey: Gadrey's $paO_2$
+  heart_rate: Heart rate
+  hemoglobin: Hemoglobin value
+  idx: Index of measurement
+  last_horowitz: Last Horowitz index
+  mean_art_press: Mean arterial pressure
+  pAO2: $pAO_2$
+  paO2_measured: Measured $paO_2$
+  ph: pH value
+  respiratory_rate: Respiratory rate
+  rmv: Respiratory minute volume
+  sex_male: Sex (male)
+  spo2: $SpO_2$
+  systolic: Systolic blood pressure
+  temperature: Temperature
+  timepoint_intraop: Intraoperatively measured

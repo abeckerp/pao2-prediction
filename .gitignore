@@ -1,0 +1,13 @@
+.venv
+*__pycache__*
+*__init__*
+tests
+pao2_prediction/plots
+pao2_prediction/plots_pseudo
+*.pdf
+*.log
+0_*
+pao2_prediction/data
+pao2_prediction/data_pseudo
+_lasso
+.DS_Store

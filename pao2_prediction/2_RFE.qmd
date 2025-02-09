@@ -1,0 +1,256 @@
+---
+title: "$paO_2$ Prediction in Neurosurgical Patients" 
+subtitle: "Recursive Feature Elimination"
+author: "Andrea S. Gutmann"
+date: today
+date-format: "YYYY-MM-DD"
+format:
+    html: 
+        code-fold: true
+        toc: true
+        toc-depth: 5
+        toc-expand: true
+        toc-title: Contents
+        number-sections: true
+    # pdf:
+    #     toc: true
+    #     number-sections: true
+    #     toc-location: left
+    #     code-line-numbers: true
+    #     output-ext: "pdf"
+    #     papersize: "A4"
+    #     include-in-header: 
+    #         text: |
+    #             \usepackage{fvextra}
+    #             \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
+    #             \DefineVerbatimEnvironment{OutputCode}{Verbatim}{breaklines,commandchars=\\\{\}}
+    #     include-before-body:
+    #         text: |
+    #             \RecustomVerbatimEnvironment{verbatim}{Verbatim}{
+    #             showspaces = false,
+    #             showtabs = false,
+    #             breaksymbolleft={},
+    #             breaklines
+    #             % Note: setting commandchars=\\\{\} here will cause an error 
+    #             }
+jupyter: python3
+---
+## Recusrive Feature Elimination
+
+### Loading libraries
+```{python}
+# | label: loading_libraries
+import csv
+import pickle
+import sys
+import time
+import random
+import math
+import pprint
+import os
+import session_info
+import matplotlib
+import yaml
+import platform
+
+import numpy as np
+import pandas as pd
+import scipy.stats as stats
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+from collections import Counter
+from matplotlib.patches import Patch
+from scipy.stats import norm, sem, t
+from sklearn import preprocessing, model_selection, metrics
+from sklearn.base import clone
+from sklearn.experimental import enable_iterative_imputer
+from sklearn.model_selection import GroupKFold, train_test_split, cross_val_score
+from sklearn.impute import IterativeImputer
+from sklearn.utils import shuffle
+from matplotlib.offsetbox import AnchoredText
+import matplotlib.ticker as ticker
+import matplotlib.transforms as mtransforms
+
+from sklearn.ensemble import (
+    GradientBoostingRegressor,
+    RandomForestRegressor,
+)
+from sklearn.neighbors import KNeighborsRegressor
+from sklearn.svm import SVR
+from sklearn.neural_network import MLPRegressor
+from sklearn.linear_model import LinearRegression, SGDRegressor
+from sklearn.feature_selection import RFECV, RFE
+from statsmodels.stats.outliers_influence import variance_inflation_factor
+from matplotlib.ticker import NullFormatter
+from time import perf_counter
+from datetime import datetime
+
+from itertools import chain
+from joblib import Parallel, delayed
+from custom_functions import (
+    evaluate,
+    inverse_transform_shaped,
+    get_evaluation,
+    plot_cv_indices,
+    return_table,
+)
+
+pp = pprint.PrettyPrinter(indent=4)
+np.random.seed(42)
+
+matplotlib.rcParams["figure.dpi"] = 300
+
+sns.set_style('whitegrid')
+
+with open("config.yml", "r") as file:
+    config = yaml.safe_load(file)
+
+
+algorithm_dict = {
+    "gbr": GradientBoostingRegressor(**config.get("default_parameters").get("gbr")),
+    "knn": KNeighborsRegressor(**config.get("default_parameters").get("knn")),
+    "rfr": RandomForestRegressor(**config.get("default_parameters").get("rfr")),
+    "svr": SVR(**config.get("default_parameters").get("svr")),
+    "sgd": SGDRegressor(**config.get("default_parameters").get("sgd")),
+    "mlp": MLPRegressor(**config.get("default_parameters").get("mlp")),
+    "mlr": LinearRegression(**config.get("default_parameters").get("mlr")),
+}
+
+```
+
+```{python}
+# | label: system_information
+print(session_info.show(html=False))
+```
+
+### RFECV Feature Selection
+
+The 2_1_hpc_script.py was executed on a HPC with the following specifications:
+
+- CPUs per task: 128
+- RAM: 128Gb
+- Python 3.10.12 (main, Jun 11 2023, 05:26:28) [GCC 11.4.0]
+- Linux-5.15.0-127-generic-x86_64-with-glibc2.35
+
+Packages:
+
+- joblib              1.3.2
+- numpy               1.26.0
+- scipy               1.11.4
+- session_info        1.0.0
+- sklearn             1.3.1
+
+Script arguments:
+
+- number of threads = 16
+- number of parallel jobs = 16
+
+----------
+
+```{python}
+# | label: load_cv_scores
+algo_train_data_dict = {}
+for name in algorithm_dict.keys():
+    try:
+        with open(f"{config.get('pickle').get('rfe_cv_scores')}{name}.pickle", "rb") as cv_pickle:
+            cv_scores_dict = pickle.load(cv_pickle)
+        algo_train_data_dict[name] = {"cv_dict": cv_scores_dict}
+    except FileNotFoundError:
+        print(f"Didn't find cv scores for {name}. Continue with the next algorithm...")
+
+with open(config.get("pickle").get(f"algo_data"), "wb") as algo_pickle:
+    pickle.dump(algo_train_data_dict, algo_pickle)
+```
+
+```{python}
+# | label: find_cv_scores
+feature_selection_count = {}
+for algo, sub_dict in algo_train_data_dict.items():
+    for f_num, values in sorted(sub_dict.get("cv_dict").items(), key=lambda x: x[0]):
+        if values.get("cv_score") >= config.get('cv_threshold'):
+            feature_selection_count[algo] = (f_num, values.get("cv_score"))
+            break
+
+print(f"Features selected based on RMSE >= {config.get('cv_threshold')}:\n{feature_selection_count}")
+```
+
+```{python}
+# | label: fig_feature_selection
+# | fig-cap: "CV RMSE scores for different Regressors for Feature Selection"
+
+fig, axs = plt.subplot_mosaic([['a.', 'b.', 'c.'], ['d.', 'e.', 'f.'], ['.', 'h.', '.']][:int(np.ceil(len(algorithm_dict.keys())/2))], layout = 'constrained', figsize=(3 * config.get('plot_size'), int(np.ceil(len(algorithm_dict.keys())/3)) * config.get('plot_size')/1.5),)
+fig.set_tight_layout(True)
+fig.suptitle("CV scores (nRMSE) per Regressor\n")
+
+all_y = []
+for name in config.get("plot_titles").keys():
+    if name in algo_train_data_dict.keys():
+        for cv_dict in algo_train_data_dict.get(name).get("cv_dict").values():
+            all_y.append(cv_dict.get("cv_score"))
+
+for ax_label, (name, title) in zip(axs.keys(), config.get("plot_titles").items()):
+    if name in algo_train_data_dict.keys():
+        ax = axs.get(ax_label)  # Get the corresponding axis for this plot
+        
+        # Check if data exists for the current algorithm
+        if name not in algo_train_data_dict.keys():
+            continue
+        
+        # Extract CV data
+        cv_dict = algo_train_data_dict.get(name).get("cv_dict")
+        x = list(cv_dict.keys())  # Number of features
+        y = [cv_dict.get(x_i)["cv_score"] for x_i in x]  # Corresponding RMSE values
+        
+        # Plot the data
+        sns.lineplot(x=x, y=y, ax=ax, marker='o', color='b', label='nRMSE')
+
+        # Find optimal point
+        optimal_x = feature_selection_count.get(name)[0]
+        optimal_y = feature_selection_count.get(name)[1]
+
+        
+        # Highlight the optimal point
+        ax.scatter(optimal_x, optimal_y, color='red', zorder=5)
+        # ax.text(optimal_x, optimal_y + 0.01,  # Adjust offset for better visibility
+                # f"Selected Features: {optimal_x}\nRMSE: {optimal_y:.2f}", 
+                # color='red', fontsize=9)
+
+        # Add reference line
+        ax.axvline(optimal_x, color='gray', linestyle='--', label='Selected Features')
+        
+        # Customize the plot
+        ax.legend(fontsize=9, loc="upper center", bbox_to_anchor=(0.5, -0.30), ncol=2,)
+        ax.grid(True, which='both', linestyle='--', linewidth=0.5)
+
+        ax.xaxis.set_major_locator(ticker.MultipleLocator(2))
+        ax.xaxis.set_major_formatter(ticker.FormatStrFormatter("%d"))
+
+        high, low = (
+            max(
+                algo_train_data_dict.get(next(iter(algo_train_data_dict)))
+                .get("cv_dict")
+                .keys()
+            )
+            + 1,
+            min(
+                algo_train_data_dict.get(next(iter(algo_train_data_dict)))
+                .get("cv_dict")
+                .keys()
+            )
+            - 1,
+        )
+        ax.set_xlim(low, high)
+        ax.set_ylim(min(all_y) * 1.05, max(all_y) * 0.95)
+
+        ax.set_xlabel("Number of features selected")
+        ax.set_ylabel("CV score")
+        ax.set_title(f"{title}")
+        trans = mtransforms.ScaledTranslation(10/72, -5/72, fig.dpi_scale_trans)
+        ax.text(0.0, 1.0, ax_label, transform=ax.transAxes + trans,
+            fontsize='medium', verticalalignment='top', fontfamily='serif',
+            bbox=dict(facecolor='0.7', edgecolor='none', pad=3.0))
+
+plt.savefig(f"plots/cv_scores.png", dpi=300, bbox_inches="tight")
+plt.show()
+```

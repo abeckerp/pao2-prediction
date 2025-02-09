@@ -1,0 +1,444 @@
+---
+title: "$paO_2$ Prediction in Neurosurgical Patients" 
+subtitle: "Including first measured Horowitz quotient"
+author: "Andrea S. Gutmann"
+date: today
+date-format: "YYYY-MM-DD"
+format:
+    html: 
+        code-fold: true
+        toc: true
+        toc-depth: 5
+        toc-expand: true
+        toc-title: Contents
+        number-sections: true
+    # pdf:
+    #     toc: true
+    #     number-sections: true
+    #     toc-location: left
+    #     code-line-numbers: true
+    #     output-ext: "pdf"
+    #     papersize: "A4"
+    #     include-in-header: 
+    #         text: |
+    #             \usepackage{fvextra}
+    #             \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
+    #             \DefineVerbatimEnvironment{OutputCode}{Verbatim}{breaklines,commandchars=\\\{\}}
+    #     include-before-body:
+    #         text: |
+    #             \RecustomVerbatimEnvironment{verbatim}{Verbatim}{
+    #             showspaces = false,
+    #             showtabs = false,
+    #             breaksymbolleft={},
+    #             breaklines
+    #             % Note: setting commandchars=\\\{\} here will cause an error 
+    #             }
+jupyter: python3
+---
+
+## Preprocessing
+
+### Loading libraries
+```{python}
+# | label: loading_libraries
+import csv, pickle, sys, time, sklearn, scipy, seaborn, statsmodels, session_info, random, math, matplotlib, os, time, pprint, yaml
+
+import numpy as np
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import scipy.stats as stats
+
+from collections import Counter
+from matplotlib.patches import Patch
+from scipy.stats import norm, sem, t
+from sklearn import preprocessing, model_selection, metrics
+from sklearn.base import clone
+from sklearn.model_selection import GroupKFold, train_test_split, cross_val_score
+from sklearn.utils import shuffle
+from matplotlib.offsetbox import AnchoredText
+import matplotlib.ticker as ticker
+
+from sklearn.ensemble import GradientBoostingRegressor
+from sklearn.neighbors import KNeighborsRegressor
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.svm import SVR
+from sklearn.linear_model import LinearRegression, SGDRegressor
+from datetime import datetime
+
+from itertools import chain
+
+
+from custom_functions import (
+    evaluate,
+    inverse_transform_shaped,
+    get_evaluation,
+    plot_cv_indices,
+    return_table,
+)
+
+matplotlib.rcParams["figure.dpi"] = 300
+
+sns.set_style('whitegrid')
+# sns.set(
+#     palette="colorblind",
+#     font_scale=1.35,
+#     rc={"figure.figsize": (12, 9), "axes.facecolor": ".92"},
+# )
+
+inverse_transform_shaped = lambda scaler, scaled: scaler.inverse_transform(
+    scaled.reshape(-1, 1)
+).reshape(1, -1)[0]
+
+
+with open("config.yml", "r") as file:
+    config = yaml.safe_load(file)
+
+algorithm_dict = {
+    "gbr": GradientBoostingRegressor(**config.get("default_parameters").get("gbr")),
+    "knn": KNeighborsRegressor(**config.get("default_parameters").get("knn")),
+    "rfr": RandomForestRegressor(**config.get("default_parameters").get("rfr")),
+    "svr": SVR(**config.get("default_parameters").get("svr")),
+    "sgd": SGDRegressor(**config.get("default_parameters").get("sgd")),
+    "mlr": LinearRegression(**config.get("default_parameters").get("mlr")),
+}
+
+pp = pprint.PrettyPrinter(indent=4)
+np.random.seed(42)
+
+best_regressor = config.get('best_regressor')
+```
+
+```{python}
+# | label: system_information
+print(session_info.show(html=False))
+```
+
+### Loading Data
+```{python}
+# | label: loading_data
+with open(config.get("pickle").get(f"feature_list"), "rb") as feature_pickle:
+    feature_list = pickle.load(feature_pickle)
+with open(config.get("pickle").get(f"y_scaler"), "rb") as scaler_pickle:
+    scaler_y = pickle.load(scaler_pickle)
+with open(config.get("pickle").get(f"train_test_data"), "rb") as train_test_pickle:
+    train_test_data = pickle.load(train_test_pickle)
+with open(config.get("pickle").get(f"completed_train_data"), "rb") as algo_pickle:
+    algo_train_data_dict = pickle.load(algo_pickle)
+with open(config.get("pickle").get("slices"), "rb") as slices_pickle:
+    slices = pickle.load(slices_pickle)
+
+with open(config.get('pickle').get(f"completed_data"), 'rb') as df_pickle:
+    df = pickle.load(df_pickle)
+
+selected_features = algo_train_data_dict.get(best_regressor).get("selected_features")
+estimator_path = f"{config.get('pickle').get('estimator')}{best_regressor}{slices.get(best_regressor)}.pickle"
+print(estimator_path, "=> fitted_estimator_22.pickle")
+estimator = pickle.load(open(estimator_path, "rb"))
+```
+
+## New Fitting
+### Preparing data for new fitting process
+```{python}
+#| label: prepare_data
+len_datapoints = len(df)
+len_surgeries = len(df.identifier.unique())
+
+selected_features_fh = list(chain(*[["first_horowitz"], selected_features]))
+
+df_fh = df[df["first_horowitz"].isnull() == False][
+    list(chain(*[["paO2_measured", "identifier"], selected_features_fh]))
+]
+
+print(
+    f"no first measured horowitz available: removed datapoints -> {len_datapoints-len(df)}"
+)
+print(
+    # f"no last measured horowitz available: removed surgeries -> {len_surgeries-len(df.identifier.unique())}"
+    f"no first measured horowitz available: removed surgeries -> {len_surgeries-len(df.identifier.unique())}"
+)
+print(f"Remaining: {len(df_fh.identifier.unique())} surgeries with {len(df_fh)} datapoints.\n")
+
+# train, test, validation
+x_train = np.array(df_fh.loc[df_fh.identifier.isin(train_test_data.get('train').get('group')),selected_features_fh])
+
+scaler_x = preprocessing.MinMaxScaler()
+scaler_x.fit(x_train)
+
+x_train_scaled = scaler_x.transform(x_train)
+
+
+x_test = np.array(df_fh.loc[df_fh.identifier.isin(train_test_data.get('test').get('group')),selected_features_fh])
+x_test_scaled = scaler_x.transform(x_test)
+
+```
+
+### Fitting the model and evaluate model
+```{python}
+#| label: evaluate_model
+estimator.fit(x_train_scaled, train_test_data.get("train").get("y_scaled")[:,1])
+test_predictions = estimator.predict(x_test_scaled)
+eval_dict_fh = evaluate(inverse_transform_shaped(scaler_y, test_predictions), train_test_data.get("test").get("y"), x_train_scaled.shape[1])
+
+print(pp.pformat(eval_dict_fh))
+
+pickle.dump(estimator, open("data/fitted_estimator_23.pickle", "wb"))
+```
+
+```{python}
+#| label: scatter_plot
+plt.rcParams["figure.figsize"] = [8, 8]
+fig, ax = plt.subplots()
+fig.set_tight_layout(True)
+
+ax.scatter(train_test_data.get("test").get("y")[:,1], inverse_transform_shaped(scaler_y, test_predictions), edgecolors=(0, 0, 0))
+max_val = 610  # max(y_test.max(), y_pred.max())
+ax.set_xlim(0, max_val)
+ax.set_ylim(0, max_val)
+ax.plot([0, max_val], [0, max_val], "k--", lw=2)
+ax.set_xlabel("Measured $paO_2$ in mmHg")
+ax.set_ylabel("Predicted $paO_2$ in mmHg")
+ax.set_title(
+    f"{config.get('plot_titles').get(best_regressor)}:\nafter first ABG,\nMAPE={round(eval_dict_fh['mape'],2)} %, MAE={round(eval_dict_fh['mae'],2)},\nRMSE={round(eval_dict_fh['rmse'],2)}, adj. $R^2$={round(eval_dict_fh['adjusted_r2'],4)}"
+)
+
+plt.savefig(f"plots/measured_predicted_{best_regressor}_fh.png", dpi=300, bbox_inches="tight")
+plt.show()
+```
+
+### Binning
+```{python}
+# | label: binning_chisquare
+
+y = train_test_data.get("test").get("y")[:, 1:]
+estimator.fit(
+    x_train_scaled,
+    train_test_data.get("train").get("y_scaled")[:, 1],
+)
+
+n_obs = []
+my_obs = []
+sd_obs = []
+n_exp = []
+my_predicted = [] 
+sd_predicted = []
+chi2_calc = []
+index = []
+
+predictions = inverse_transform_shaped(
+    scaler_y,
+    estimator.predict(x_test_scaled), 
+)
+
+first = True
+for interval in zip(np.arange(50, 600, 50), np.arange(100, 650, 50)):
+    if interval[1] <= 450:
+        chi2_calc.append(True)
+    else:
+        chi2_calc.append(False)
+    if first:
+        interval = (0, interval[1])
+        first = False
+    index.append(f">{interval[0]}-{interval[1]}")
+    support_y = np.array(
+        [True if x > interval[0] and x <= interval[1] else False for x in y]
+    )  # for y and my_predicted
+    support_predictions = np.array(
+        [True if x > interval[0] and x <= interval[1] else False for x in predictions]
+    )  # for chi2
+    print(
+        f"{sum(support_y)} y labels and {sum(support_predictions)} predictions are supporting interval {interval}"
+    )
+    n_obs.append(sum(support_y))
+    n_exp.append(sum(support_predictions))
+
+    observed_y = y[support_y]
+
+    if len(y[support_y]) == 0:
+        continue
+    my_obs.append(np.mean(y[support_y]))  # mean for this bin
+    sd_obs.append(np.std(y[support_y]))
+
+    my_predicted.append(np.mean(predictions[support_y]))
+    sd_predicted.append(np.std(predictions[support_y]))
+
+## over 450
+index.append(">450")
+chi2_calc.append(True)
+support_y = np.array([True if x > 450 else False for x in y])
+support_predictions = np.array([True if x > 450 else False for x in predictions])
+
+my_obs.append(np.mean(y[support_y]))
+sd_obs.append(np.std(y[support_y]))
+my_predicted.append(np.mean(predictions[support_y]))
+sd_predicted.append(np.std(predictions[support_y]))
+
+print(
+    f"{sum(support_y)} y labels and {sum(support_predictions)} predictions are supporting >450"
+)
+
+n_obs.append(sum(support_y))
+n_exp.append(sum(support_predictions))
+
+
+chi2_df = pd.DataFrame(
+    {
+        "n_observed": n_obs,
+        "n_predicted": n_exp,
+        "my_observed": my_obs,
+        "sd_observed": sd_obs,
+        "my_predicted": my_predicted,
+        "sd_predicted": sd_predicted,
+        "chi2_calculation": chi2_calc,
+    },
+    index=index,
+).round({
+    "my_observed": 2,
+    "sd_observed": 2,
+    "my_predicted": 2,
+    "sd_predicted": 2,
+})
+
+display(chi2_df)
+
+
+statistics, p = stats.chisquare(
+    chi2_df.loc[chi2_df.chi2_calculation == True, "n_observed"],
+    chi2_df.loc[chi2_df.chi2_calculation == True, "n_predicted"],
+)
+print(f"Chi-squared test returned a p-value of {round(p,4)}")
+```
+
+
+## Percentage Errors
+```{python}
+# | label: percentage_errors_plot
+# | fig-cap: "Boxplot of percentage errors"
+
+algorithm = config.get('plot_titles').get(best_regressor)
+
+pe_list = list(
+    map(lambda tup: 100 * (tup[0] - tup[1]) / tup[1], zip(y.ravel(), predictions))
+)
+
+fig = plt.figure(figsize=(config.get('plot_size')/2, config.get('plot_size')))
+plt.title(f"{algorithm}:\nBoxplot for percentage errors of predicted $paO_2$ values")
+bxplt = plt.boxplot(pe_list)
+plt.ylabel("percentage error in %")
+plt.xticks([])
+plt.savefig(f"plots/percentage_errors_{best_regressor}_fh.png", bbox_inches="tight", dpi=300)
+plt.show()
+plt.close("all")
+
+print(f"\n{algorithm.upper()}")
+print(f"Percentage Error median: {round(np.median(pe_list),2)}")
+lower_boundary = (pd.DataFrame(pe_list).quantile(q=0.25))[0]
+print(f"Percentage Error Q1: {round(lower_boundary,4)}")
+upper_boundary = (pd.DataFrame(pe_list).quantile(q=0.75))[0]
+print(f"Percentage Error Q3: {round(upper_boundary,4)}")
+iqr = upper_boundary - lower_boundary
+print(f"Interquartile range of percentage errors: {round(iqr,4)}")
+print(f"Lower boundary for outliers: {round(lower_boundary-1.5*iqr,3)}")
+print(f"Upper boundary for outliers: {round(upper_boundary+1.5*iqr,3)}")
+
+pao2_pred_list_over = []
+pao2_x_list_over = []
+identifier_over = []
+pao2_pred_list_under = []
+pao2_x_list_under = []
+identifier_under = []
+
+# find outliers for plot
+for idx, x in enumerate(y): 
+    # error is neg: overestimated
+    # error is pos: underestimated
+    pe = 100 * (predictions[idx] - x) / x
+
+    if pe <= lower_boundary - 1.5*iqr:
+        # highly underestimated
+        pao2_pred_list_under.append(predictions[idx])
+        pao2_x_list_under.append(x)
+        identifier_under.append(train_test_data.get("test").get("group")[idx])
+    elif pe >= upper_boundary + 1.5*iqr:
+        # highly overestimated
+        pao2_pred_list_over.append(predictions[idx])
+        pao2_x_list_over.append(x)
+        identifier_over.append(train_test_data.get("test").get("group")[idx])
+
+print(f"Found {len(pao2_pred_list_over)} highly overerstimated paO2 values for {len(set(identifier_over))} patients.")
+print(f"Found {len(pao2_pred_list_under)} highly undererstimated paO2 values for {len(set(identifier_under))} patients.")
+```
+
+```{python}
+# | label: outlier_plot
+# | eval: true
+for col_idx, values in enumerate(x_test.T):
+    col_name = selected_features_fh[col_idx]
+    list_over = []
+    list_under = []
+    for idx, x in enumerate(y):
+        pe = 100 * (predictions[idx] - x) / x
+        # check if y value is overestimated
+        if pe <= lower_boundary - 1.5*iqr:
+            # highly underestimated
+            list_under.append(values[idx])
+        # check if overestimated
+        elif pe >= upper_boundary + 1.5*iqr:
+            # highly overestimated
+            list_over.append(values[idx])
+
+    if col_name in config.get("multi_measurements_columns"):
+        # pool over patient 
+        pooled_list_over = []
+        pooled_list_under = []
+        for identifier in identifier_over:
+            pooled_list_over.append(np.mean([list_over[i] for i,o in enumerate(identifier_over) if o == identifier]))
+        for identifier in identifier_under:
+            pooled_list_under.append(np.mean([list_under[i] for i,o in enumerate(identifier_under) if o == identifier]))
+        list_over = pooled_list_over
+        list_under = pooled_list_under
+    elif col_name in config.get("single_measurements_columns")+["creatinine"]:
+        list_over = list(set(list_over))
+        list_under = list(set(list_under))
+    else:
+        print("Error")
+        break
+
+    p = round(stats.mannwhitneyu(list_over, list_under, method="asymptotic").pvalue, 5)
+    print(f"{col_name}: p={p}")
+    if p < 0.05:
+        print(
+            f"\tmean {col_name} in overestimated (n={len(list_over)}): {round(np.mean(list_over),3)} - mean {col_name} in underestimated (n={len(list_under)}): {round(np.mean(list_under),3)}"
+        )
+    
+plt.rcParams["figure.figsize"] = [config.get('plot_size'), config.get('plot_size')]
+fig, ax = plt.subplots()
+ax.scatter(y.ravel(), predictions, edgecolors=(0, 0, 0))
+ax.scatter(
+    pao2_x_list_over, pao2_pred_list_over, edgecolors=(0, 0, 0), color="yellow"
+)
+ax.scatter(
+    pao2_x_list_under,
+    pao2_pred_list_under,
+    edgecolors=(0, 0, 0),
+    color="orange",
+)
+max_val = 600
+ax.set_xlim(0, max_val)
+ax.set_ylim(0, max_val)
+ax.plot([0, max_val], [0, max_val], "k--", lw=2)
+ax.set_xlabel("Measured $paO_2$ in mmHg")
+ax.set_ylabel("Predicted $paO_2$ in mmHg")
+
+
+ax.set_title(
+    f"{config.get('plot_titles').get(best_regressor)} with first p/F ratio:\nmeasured vs. predicted $paO_2$ values,\nMAPE={round(eval_dict_fh.get('mape'),2)} %, MAE={round(eval_dict_fh.get('mae'),2)},\nRMSE={round(eval_dict_fh.get('rmse'),2)}, adj. $R^2$={round(eval_dict_fh.get('adjusted_r2'),4)}"
+)
+plt.savefig(
+    f"plots/measured_predicted_outliers_{best_regressor}_fh.png",
+    dpi=300,
+    bbox_inches="tight",
+)
+plt.show("all")
+plt.close("all")
+```
