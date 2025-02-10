@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Andrea S. Gutmann">
-<meta name="dcterms.date" content="2025-02-09">
+<meta name="dcterms.date" content="2025-02-10">
 
 <title>paO_2 Prediction in Neurosurgical Patients</title>
 <style>
@@ -152,7 +152,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">2025-02-09</p>
+      <p class="date">2025-02-10</p>
     </div>
   </div>
   
@@ -239,7 +239,7 @@ window.Quarto = {
 <span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a>best_regressor <span class="op">=</span> config.get(<span class="st">'best_regressor'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stderr">
-<pre><code>/Users/abeckerp/Documents/projects/.venv/lib/python3.12/site-packages/tqdm/auto.py:21: TqdmWarning: IProgress not found. Please update jupyter and ipywidgets. See https://ipywidgets.readthedocs.io/en/stable/user_install.html
+<pre><code>/Users/abeckerp/Documents/pao2-prediction-project/.venv/lib/python3.12/site-packages/tqdm/auto.py:21: TqdmWarning: IProgress not found. Please update jupyter and ipywidgets. See https://ipywidgets.readthedocs.io/en/stable/user_install.html
   from .autonotebook import tqdm as notebook_tqdm</code></pre>
 </div>
 </div>
@@ -271,7 +271,7 @@ notebook            7.0.4
 Python 3.12.0 (v3.12.0:0fb18b02c8, Oct  2 2023, 09:45:56) [Clang 13.0.0 (clang-1300.0.29.30)]
 macOS-15.3-arm64-arm-64bit
 -----
-Session information updated at 2025-02-09 11:03
+Session information updated at 2025-02-10 09:56
 None</code></pre>
 </div>
 </div>
@@ -562,7 +562,7 @@ F1 score: 73 %.</code></pre>
 </section>
 <section id="binning-table-table-2" class="level3" data-number="2.2">
 <h3 data-number="2.2" class="anchored" data-anchor-id="binning-table-table-2"><span class="header-section-number">2.2</span> Binning table Table 2</h3>
-<div id="c88562d5" class="cell" data-execution_count="6">
+<div id="29f53470" class="cell" data-execution_count="6">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>chi2_df[<span class="st">'mean_obs_sd'</span>] <span class="op">=</span> chi2_df.<span class="bu">apply</span>(<span class="kw">lambda</span> x: <span class="ss">f"</span><span class="sc">{</span>x[<span class="st">'my_observed'</span>]<span class="sc">}</span><span class="ss"> ± </span><span class="sc">{</span>x[<span class="st">'sd_observed'</span>]<span class="sc">}</span><span class="ss">"</span>, axis<span class="op">=</span><span class="dv">1</span>)</span>

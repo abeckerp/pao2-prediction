@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Andrea S. Gutmann">
-<meta name="dcterms.date" content="2025-02-07">
+<meta name="dcterms.date" content="2025-02-10">
 
 <title>paO_2 Prediction in Neurosurgical Patients</title>
 <style>
@@ -121,10 +121,10 @@ window.Quarto = {
   </ul></li>
   <li><a href="#descriptive-statistics" id="toc-descriptive-statistics" class="nav-link" data-scroll-target="#descriptive-statistics"><span class="header-section-number">2</span> Descriptive Statistics</a>
   <ul>
-  <li><a href="#table-2" id="toc-table-2" class="nav-link" data-scroll-target="#table-2"><span class="header-section-number">2.1</span> Table 2</a></li>
-  <li><a href="#table-3-preparation-train-data" id="toc-table-3-preparation-train-data" class="nav-link" data-scroll-target="#table-3-preparation-train-data"><span class="header-section-number">2.2</span> Table 3 Preparation Train Data</a></li>
-  <li><a href="#table-3-preparation-test-data" id="toc-table-3-preparation-test-data" class="nav-link" data-scroll-target="#table-3-preparation-test-data"><span class="header-section-number">2.3</span> Table 3 Preparation Test Data</a></li>
-  <li><a href="#table-3" id="toc-table-3" class="nav-link" data-scroll-target="#table-3"><span class="header-section-number">2.4</span> Table 3</a></li>
+  <li><a href="#table-3" id="toc-table-3" class="nav-link" data-scroll-target="#table-3"><span class="header-section-number">2.1</span> Table 3</a></li>
+  <li><a href="#table-4-preparation-train-data" id="toc-table-4-preparation-train-data" class="nav-link" data-scroll-target="#table-4-preparation-train-data"><span class="header-section-number">2.2</span> Table 4 Preparation Train Data</a></li>
+  <li><a href="#table-4-preparation-test-data" id="toc-table-4-preparation-test-data" class="nav-link" data-scroll-target="#table-4-preparation-test-data"><span class="header-section-number">2.3</span> Table 4 Preparation Test Data</a></li>
+  <li><a href="#table-4" id="toc-table-4" class="nav-link" data-scroll-target="#table-4"><span class="header-section-number">2.4</span> Table 4</a></li>
   </ul></li>
   <li><a href="#base-model-evaluation" id="toc-base-model-evaluation" class="nav-link" data-scroll-target="#base-model-evaluation"><span class="header-section-number">3</span> Base Model Evaluation</a></li>
   <li><a href="#hyperparameter-tuning" id="toc-hyperparameter-tuning" class="nav-link" data-scroll-target="#hyperparameter-tuning"><span class="header-section-number">4</span> Hyperparameter Tuning</a>
@@ -158,7 +158,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">2025-02-07</p>
+      <p class="date">2025-02-10</p>
     </div>
   </div>
   
@@ -280,7 +280,7 @@ notebook            7.0.4
 Python 3.12.0 (v3.12.0:0fb18b02c8, Oct  2 2023, 09:45:56) [Clang 13.0.0 (clang-1300.0.29.30)]
 macOS-15.3-arm64-arm-64bit
 -----
-Session information updated at 2025-02-07 18:56
+Session information updated at 2025-02-10 09:44
 None</code></pre>
 </div>
 </div>
@@ -401,8 +401,8 @@ Highest neg. RMSE score for mlr is reached with 23 features (-0.06878).
 </section>
 <section id="descriptive-statistics" class="level2" data-number="2">
 <h2 data-number="2" class="anchored" data-anchor-id="descriptive-statistics"><span class="header-section-number">2</span> Descriptive Statistics</h2>
-<section id="table-2" class="level3" data-number="2.1">
-<h3 data-number="2.1" class="anchored" data-anchor-id="table-2"><span class="header-section-number">2.1</span> Table 2</h3>
+<section id="table-3" class="level3" data-number="2.1">
+<h3 data-number="2.1" class="anchored" data-anchor-id="table-3"><span class="header-section-number">2.1</span> Table 3</h3>
 <div id="cell-descriptives" class="cell" data-execution_count="6">
 <details class="code-fold">
 <summary>Code</summary>
@@ -815,8 +815,8 @@ ASA class 5: 35 patients.</code></pre>
 </div>
 </div>
 </section>
-<section id="table-3-preparation-train-data" class="level3" data-number="2.2">
-<h3 data-number="2.2" class="anchored" data-anchor-id="table-3-preparation-train-data"><span class="header-section-number">2.2</span> Table 3 Preparation Train Data</h3>
+<section id="table-4-preparation-train-data" class="level3" data-number="2.2">
+<h3 data-number="2.2" class="anchored" data-anchor-id="table-4-preparation-train-data"><span class="header-section-number">2.2</span> Table 4 Preparation Train Data</h3>
 <div id="descriptives_train" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Code</summary>
@@ -851,8 +851,8 @@ ASA class 5: 29 patients.</code></pre>
 </div>
 </div>
 </section>
-<section id="table-3-preparation-test-data" class="level3" data-number="2.3">
-<h3 data-number="2.3" class="anchored" data-anchor-id="table-3-preparation-test-data"><span class="header-section-number">2.3</span> Table 3 Preparation Test Data</h3>
+<section id="table-4-preparation-test-data" class="level3" data-number="2.3">
+<h3 data-number="2.3" class="anchored" data-anchor-id="table-4-preparation-test-data"><span class="header-section-number">2.3</span> Table 4 Preparation Test Data</h3>
 <div id="descriptives_test" class="cell" data-execution_count="8">
 <details class="code-fold">
 <summary>Code</summary>
@@ -887,9 +887,9 @@ ASA class 5: 6 patients.</code></pre>
 </div>
 </div>
 </section>
-<section id="table-3" class="level3" data-number="2.4">
-<h3 data-number="2.4" class="anchored" data-anchor-id="table-3"><span class="header-section-number">2.4</span> Table 3</h3>
-<div id="99339823" class="cell" data-execution_count="9">
+<section id="table-4" class="level3" data-number="2.4">
+<h3 data-number="2.4" class="anchored" data-anchor-id="table-4"><span class="header-section-number">2.4</span> Table 4</h3>
+<div id="e0b41472" class="cell" data-execution_count="9">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>desc_tt_df <span class="op">=</span> descriptive_df_test.add_suffix(<span class="st">'_test'</span>).join(descriptive_df_train.add_suffix(<span class="st">'_train'</span>))</span>
@@ -1672,19 +1672,19 @@ Best rank-combination for mlr (slice 0) is (1, 1), resulting in the following te
                 - neg. RMSE: -0.0781
                 - adj. R2: 0.6908
             
-Found more than one lowest sum (2): 3.
+Found more than one lowest sum (2): 2.
 
 
 Best rank-combination for mlp (slice 0) is (1, 1), resulting in the following test scores:
-                - neg. RMSE: -0.1468
-                - adj. R2: -0.0663
+                - neg. RMSE: -0.1471
+                - adj. R2: -0.0626
             
-Found more than one lowest sum (2): 3.
+Found more than one lowest sum (2): 2.
 
 
 Best rank-combination for mlp (slice 1) is (1, 1), resulting in the following test scores:
-                - neg. RMSE: -0.1468
-                - adj. R2: -0.0663
+                - neg. RMSE: -0.1471
+                - adj. R2: -0.0626
             
 Found more than one lowest sum (2): 6.
 
@@ -1693,12 +1693,12 @@ Best rank-combination for mlp (slice 2) is (1, 1), resulting in the following te
                 - neg. RMSE: -0.1475
                 - adj. R2: -0.0735
             
-Found more than one lowest sum (2): 12.
+Found more than one lowest sum (2): 18.
 
 
 Best rank-combination for mlp (slice 3) is (1, 1), resulting in the following test scores:
-                - neg. RMSE: -0.1045
-                - adj. R2: 0.4305
+                - neg. RMSE: -0.1488
+                - adj. R2: -0.0948
             </code></pre>
 </div>
 </div>
@@ -1873,23 +1873,23 @@ mlr 0
     'rho': 0.7099602660690676,
     'rmse': 49.46641689635195}
 mlp 0
-    {   'adjusted_r2': 0.6985702782053596,
-    'ci_rho_lower': 0.7339699150902899,
-    'ci_rho_upper': 0.7627045767636751,
-    'mae': 78.98954439902903,
-    'mape': 18.170413429297742,
+    {   'adjusted_r2': -0.038840594606950773,
+    'ci_rho_lower': 0.21577559541143723,
+    'ci_rho_upper': 0.2771486300521883,
+    'mae': 68.51720187988606,
+    'mape': 33.00728833000518,
     'model': 'MLPRegressor',
-    'rho': 0.7486887003290031,
-    'rmse': 46.42706808595797}
+    'rho': 0.2467094702069364,
+    'rmse': 86.189165961126}
 mlp 1
-    {   'adjusted_r2': 0.6985702782053596,
-    'ci_rho_lower': 0.7339699150902899,
-    'ci_rho_upper': 0.7627045767636751,
-    'mae': 78.98954439902903,
-    'mape': 18.170413429297742,
+    {   'adjusted_r2': -0.038840594606950773,
+    'ci_rho_lower': 0.21577559541143723,
+    'ci_rho_upper': 0.2771486300521883,
+    'mae': 68.51720187988606,
+    'mape': 33.00728833000518,
     'model': 'MLPRegressor',
-    'rho': 0.7486887003290031,
-    'rmse': 46.42706808595797}
+    'rho': 0.2467094702069364,
+    'rmse': 86.189165961126}
 mlp 2
     {   'adjusted_r2': 0.7008673821596616,
     'ci_rho_lower': 0.7376471174946742,
@@ -1996,147 +1996,147 @@ standard parameters are:
 <style type="text/css">
 </style>
 
-<div id="T_374de" class="quarto-float quarto-figure quarto-figure-center anchored" data-quarto-postprocess="true">
+<div id="T_e67e6" class="quarto-float quarto-figure quarto-figure-center anchored" data-quarto-postprocess="true">
 <figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="T_374de-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="T_e67e6-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Table&nbsp;1: Gradient Boosting Regression Tree
 </figcaption>
-<div aria-describedby="T_374de-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<table id="T_374de" class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<div aria-describedby="T_e67e6-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table id="T_e67e6" class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
 <thead>
 <tr class="header">
 <th class="blank level0" data-quarto-table-cell-role="th">&nbsp;</th>
-<th id="T_374de_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">default_params</th>
-<th id="T_374de_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">hyperparameters0</th>
-<th id="T_374de_level0_col2" class="col_heading level0 col2" data-quarto-table-cell-role="th">best_parameters</th>
+<th id="T_e67e6_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">default_params</th>
+<th id="T_e67e6_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">hyperparameters0</th>
+<th id="T_e67e6_level0_col2" class="col_heading level0 col2" data-quarto-table-cell-role="th">best_parameters</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td id="T_374de_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">alpha</td>
-<td id="T_374de_row0_col0" class="data row0 col0">0.900000</td>
-<td id="T_374de_row0_col1" class="data row0 col1"></td>
-<td id="T_374de_row0_col2" class="data row0 col2">0.900000</td>
+<td id="T_e67e6_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">alpha</td>
+<td id="T_e67e6_row0_col0" class="data row0 col0">0.900000</td>
+<td id="T_e67e6_row0_col1" class="data row0 col1"></td>
+<td id="T_e67e6_row0_col2" class="data row0 col2">0.900000</td>
 </tr>
 <tr class="even">
-<td id="T_374de_level0_row1" class="row_heading level0 row1" data-quarto-table-cell-role="th">ccp_alpha</td>
-<td id="T_374de_row1_col0" class="data row1 col0">0.000000</td>
-<td id="T_374de_row1_col1" class="data row1 col1"></td>
-<td id="T_374de_row1_col2" class="data row1 col2">0.000000</td>
+<td id="T_e67e6_level0_row1" class="row_heading level0 row1" data-quarto-table-cell-role="th">ccp_alpha</td>
+<td id="T_e67e6_row1_col0" class="data row1 col0">0.000000</td>
+<td id="T_e67e6_row1_col1" class="data row1 col1"></td>
+<td id="T_e67e6_row1_col2" class="data row1 col2">0.000000</td>
 </tr>
 <tr class="odd">
-<td id="T_374de_level0_row2" class="row_heading level0 row2" data-quarto-table-cell-role="th">criterion</td>
-<td id="T_374de_row2_col0" class="data row2 col0">friedman_mse</td>
-<td id="T_374de_row2_col1" class="data row2 col1"></td>
-<td id="T_374de_row2_col2" class="data row2 col2">friedman_mse</td>
+<td id="T_e67e6_level0_row2" class="row_heading level0 row2" data-quarto-table-cell-role="th">criterion</td>
+<td id="T_e67e6_row2_col0" class="data row2 col0">friedman_mse</td>
+<td id="T_e67e6_row2_col1" class="data row2 col1"></td>
+<td id="T_e67e6_row2_col2" class="data row2 col2">friedman_mse</td>
 </tr>
 <tr class="even">
-<td id="T_374de_level0_row3" class="row_heading level0 row3" data-quarto-table-cell-role="th">init</td>
-<td id="T_374de_row3_col0" class="data row3 col0"></td>
-<td id="T_374de_row3_col1" class="data row3 col1"></td>
-<td id="T_374de_row3_col2" class="data row3 col2">None</td>
+<td id="T_e67e6_level0_row3" class="row_heading level0 row3" data-quarto-table-cell-role="th">init</td>
+<td id="T_e67e6_row3_col0" class="data row3 col0"></td>
+<td id="T_e67e6_row3_col1" class="data row3 col1"></td>
+<td id="T_e67e6_row3_col2" class="data row3 col2">None</td>
 </tr>
 <tr class="odd">
-<td id="T_374de_level0_row4" class="row_heading level0 row4" data-quarto-table-cell-role="th">learning_rate</td>
-<td id="T_374de_row4_col0" class="data row4 col0">0.100000</td>
-<td id="T_374de_row4_col1" class="data row4 col1">[0.01 0.2075 0.405 0.6025 0.8 ]</td>
-<td id="T_374de_row4_col2" class="data row4 col2">0.207500</td>
+<td id="T_e67e6_level0_row4" class="row_heading level0 row4" data-quarto-table-cell-role="th">learning_rate</td>
+<td id="T_e67e6_row4_col0" class="data row4 col0">0.100000</td>
+<td id="T_e67e6_row4_col1" class="data row4 col1">[0.01 0.2075 0.405 0.6025 0.8 ]</td>
+<td id="T_e67e6_row4_col2" class="data row4 col2">0.207500</td>
 </tr>
 <tr class="even">
-<td id="T_374de_level0_row5" class="row_heading level0 row5" data-quarto-table-cell-role="th">loss</td>
-<td id="T_374de_row5_col0" class="data row5 col0">squared_error</td>
-<td id="T_374de_row5_col1" class="data row5 col1">['squared_error', 'huber', 'quantile']</td>
-<td id="T_374de_row5_col2" class="data row5 col2">squared_error</td>
+<td id="T_e67e6_level0_row5" class="row_heading level0 row5" data-quarto-table-cell-role="th">loss</td>
+<td id="T_e67e6_row5_col0" class="data row5 col0">squared_error</td>
+<td id="T_e67e6_row5_col1" class="data row5 col1">['squared_error', 'huber', 'quantile']</td>
+<td id="T_e67e6_row5_col2" class="data row5 col2">squared_error</td>
 </tr>
 <tr class="odd">
-<td id="T_374de_level0_row6" class="row_heading level0 row6" data-quarto-table-cell-role="th">max_depth</td>
-<td id="T_374de_row6_col0" class="data row6 col0">3</td>
-<td id="T_374de_row6_col1" class="data row6 col1">[2, 3, 4, 5, 6, None]</td>
-<td id="T_374de_row6_col2" class="data row6 col2">2</td>
+<td id="T_e67e6_level0_row6" class="row_heading level0 row6" data-quarto-table-cell-role="th">max_depth</td>
+<td id="T_e67e6_row6_col0" class="data row6 col0">3</td>
+<td id="T_e67e6_row6_col1" class="data row6 col1">[2, 3, 4, 5, 6, None]</td>
+<td id="T_e67e6_row6_col2" class="data row6 col2">2</td>
 </tr>
 <tr class="even">
-<td id="T_374de_level0_row7" class="row_heading level0 row7" data-quarto-table-cell-role="th">max_features</td>
-<td id="T_374de_row7_col0" class="data row7 col0"></td>
-<td id="T_374de_row7_col1" class="data row7 col1"></td>
-<td id="T_374de_row7_col2" class="data row7 col2">None</td>
+<td id="T_e67e6_level0_row7" class="row_heading level0 row7" data-quarto-table-cell-role="th">max_features</td>
+<td id="T_e67e6_row7_col0" class="data row7 col0"></td>
+<td id="T_e67e6_row7_col1" class="data row7 col1"></td>
+<td id="T_e67e6_row7_col2" class="data row7 col2">None</td>
 </tr>
 <tr class="odd">
-<td id="T_374de_level0_row8" class="row_heading level0 row8" data-quarto-table-cell-role="th">max_leaf_nodes</td>
-<td id="T_374de_row8_col0" class="data row8 col0"></td>
-<td id="T_374de_row8_col1" class="data row8 col1"></td>
-<td id="T_374de_row8_col2" class="data row8 col2">None</td>
+<td id="T_e67e6_level0_row8" class="row_heading level0 row8" data-quarto-table-cell-role="th">max_leaf_nodes</td>
+<td id="T_e67e6_row8_col0" class="data row8 col0"></td>
+<td id="T_e67e6_row8_col1" class="data row8 col1"></td>
+<td id="T_e67e6_row8_col2" class="data row8 col2">None</td>
 </tr>
 <tr class="even">
-<td id="T_374de_level0_row9" class="row_heading level0 row9" data-quarto-table-cell-role="th">min_impurity_decrease</td>
-<td id="T_374de_row9_col0" class="data row9 col0">0.000000</td>
-<td id="T_374de_row9_col1" class="data row9 col1"></td>
-<td id="T_374de_row9_col2" class="data row9 col2">0.000000</td>
+<td id="T_e67e6_level0_row9" class="row_heading level0 row9" data-quarto-table-cell-role="th">min_impurity_decrease</td>
+<td id="T_e67e6_row9_col0" class="data row9 col0">0.000000</td>
+<td id="T_e67e6_row9_col1" class="data row9 col1"></td>
+<td id="T_e67e6_row9_col2" class="data row9 col2">0.000000</td>
 </tr>
 <tr class="odd">
-<td id="T_374de_level0_row10" class="row_heading level0 row10" data-quarto-table-cell-role="th">min_samples_leaf</td>
-<td id="T_374de_row10_col0" class="data row10 col0">1</td>
-<td id="T_374de_row10_col1" class="data row10 col1">[1, 2, 3, 4]</td>
-<td id="T_374de_row10_col2" class="data row10 col2">3</td>
+<td id="T_e67e6_level0_row10" class="row_heading level0 row10" data-quarto-table-cell-role="th">min_samples_leaf</td>
+<td id="T_e67e6_row10_col0" class="data row10 col0">1</td>
+<td id="T_e67e6_row10_col1" class="data row10 col1">[1, 2, 3, 4]</td>
+<td id="T_e67e6_row10_col2" class="data row10 col2">3</td>
 </tr>
 <tr class="even">
-<td id="T_374de_level0_row11" class="row_heading level0 row11" data-quarto-table-cell-role="th">min_samples_split</td>
-<td id="T_374de_row11_col0" class="data row11 col0">2</td>
-<td id="T_374de_row11_col1" class="data row11 col1"></td>
-<td id="T_374de_row11_col2" class="data row11 col2">2</td>
+<td id="T_e67e6_level0_row11" class="row_heading level0 row11" data-quarto-table-cell-role="th">min_samples_split</td>
+<td id="T_e67e6_row11_col0" class="data row11 col0">2</td>
+<td id="T_e67e6_row11_col1" class="data row11 col1"></td>
+<td id="T_e67e6_row11_col2" class="data row11 col2">2</td>
 </tr>
 <tr class="odd">
-<td id="T_374de_level0_row12" class="row_heading level0 row12" data-quarto-table-cell-role="th">min_weight_fraction_leaf</td>
-<td id="T_374de_row12_col0" class="data row12 col0">0.000000</td>
-<td id="T_374de_row12_col1" class="data row12 col1"></td>
-<td id="T_374de_row12_col2" class="data row12 col2">0.000000</td>
+<td id="T_e67e6_level0_row12" class="row_heading level0 row12" data-quarto-table-cell-role="th">min_weight_fraction_leaf</td>
+<td id="T_e67e6_row12_col0" class="data row12 col0">0.000000</td>
+<td id="T_e67e6_row12_col1" class="data row12 col1"></td>
+<td id="T_e67e6_row12_col2" class="data row12 col2">0.000000</td>
 </tr>
 <tr class="even">
-<td id="T_374de_level0_row13" class="row_heading level0 row13" data-quarto-table-cell-role="th">n_estimators</td>
-<td id="T_374de_row13_col0" class="data row13 col0">100</td>
-<td id="T_374de_row13_col1" class="data row13 col1">[50, 80, 100, 120, 150]</td>
-<td id="T_374de_row13_col2" class="data row13 col2">50</td>
+<td id="T_e67e6_level0_row13" class="row_heading level0 row13" data-quarto-table-cell-role="th">n_estimators</td>
+<td id="T_e67e6_row13_col0" class="data row13 col0">100</td>
+<td id="T_e67e6_row13_col1" class="data row13 col1">[50, 80, 100, 120, 150]</td>
+<td id="T_e67e6_row13_col2" class="data row13 col2">50</td>
 </tr>
 <tr class="odd">
-<td id="T_374de_level0_row14" class="row_heading level0 row14" data-quarto-table-cell-role="th">n_iter_no_change</td>
-<td id="T_374de_row14_col0" class="data row14 col0"></td>
-<td id="T_374de_row14_col1" class="data row14 col1"></td>
-<td id="T_374de_row14_col2" class="data row14 col2">None</td>
+<td id="T_e67e6_level0_row14" class="row_heading level0 row14" data-quarto-table-cell-role="th">n_iter_no_change</td>
+<td id="T_e67e6_row14_col0" class="data row14 col0"></td>
+<td id="T_e67e6_row14_col1" class="data row14 col1"></td>
+<td id="T_e67e6_row14_col2" class="data row14 col2">None</td>
 </tr>
 <tr class="even">
-<td id="T_374de_level0_row15" class="row_heading level0 row15" data-quarto-table-cell-role="th">random_state</td>
-<td id="T_374de_row15_col0" class="data row15 col0">42</td>
-<td id="T_374de_row15_col1" class="data row15 col1"></td>
-<td id="T_374de_row15_col2" class="data row15 col2">42</td>
+<td id="T_e67e6_level0_row15" class="row_heading level0 row15" data-quarto-table-cell-role="th">random_state</td>
+<td id="T_e67e6_row15_col0" class="data row15 col0">42</td>
+<td id="T_e67e6_row15_col1" class="data row15 col1"></td>
+<td id="T_e67e6_row15_col2" class="data row15 col2">42</td>
 </tr>
 <tr class="odd">
-<td id="T_374de_level0_row16" class="row_heading level0 row16" data-quarto-table-cell-role="th">subsample</td>
-<td id="T_374de_row16_col0" class="data row16 col0">1.000000</td>
-<td id="T_374de_row16_col1" class="data row16 col1"></td>
-<td id="T_374de_row16_col2" class="data row16 col2">1.000000</td>
+<td id="T_e67e6_level0_row16" class="row_heading level0 row16" data-quarto-table-cell-role="th">subsample</td>
+<td id="T_e67e6_row16_col0" class="data row16 col0">1.000000</td>
+<td id="T_e67e6_row16_col1" class="data row16 col1"></td>
+<td id="T_e67e6_row16_col2" class="data row16 col2">1.000000</td>
 </tr>
 <tr class="even">
-<td id="T_374de_level0_row17" class="row_heading level0 row17" data-quarto-table-cell-role="th">tol</td>
-<td id="T_374de_row17_col0" class="data row17 col0">0.000100</td>
-<td id="T_374de_row17_col1" class="data row17 col1"></td>
-<td id="T_374de_row17_col2" class="data row17 col2">0.000100</td>
+<td id="T_e67e6_level0_row17" class="row_heading level0 row17" data-quarto-table-cell-role="th">tol</td>
+<td id="T_e67e6_row17_col0" class="data row17 col0">0.000100</td>
+<td id="T_e67e6_row17_col1" class="data row17 col1"></td>
+<td id="T_e67e6_row17_col2" class="data row17 col2">0.000100</td>
 </tr>
 <tr class="odd">
-<td id="T_374de_level0_row18" class="row_heading level0 row18" data-quarto-table-cell-role="th">validation_fraction</td>
-<td id="T_374de_row18_col0" class="data row18 col0">0.100000</td>
-<td id="T_374de_row18_col1" class="data row18 col1"></td>
-<td id="T_374de_row18_col2" class="data row18 col2">0.100000</td>
+<td id="T_e67e6_level0_row18" class="row_heading level0 row18" data-quarto-table-cell-role="th">validation_fraction</td>
+<td id="T_e67e6_row18_col0" class="data row18 col0">0.100000</td>
+<td id="T_e67e6_row18_col1" class="data row18 col1"></td>
+<td id="T_e67e6_row18_col2" class="data row18 col2">0.100000</td>
 </tr>
 <tr class="even">
-<td id="T_374de_level0_row19" class="row_heading level0 row19" data-quarto-table-cell-role="th">verbose</td>
-<td id="T_374de_row19_col0" class="data row19 col0">0</td>
-<td id="T_374de_row19_col1" class="data row19 col1"></td>
-<td id="T_374de_row19_col2" class="data row19 col2">0</td>
+<td id="T_e67e6_level0_row19" class="row_heading level0 row19" data-quarto-table-cell-role="th">verbose</td>
+<td id="T_e67e6_row19_col0" class="data row19 col0">0</td>
+<td id="T_e67e6_row19_col1" class="data row19 col1"></td>
+<td id="T_e67e6_row19_col2" class="data row19 col2">0</td>
 </tr>
 <tr class="odd">
-<td id="T_374de_level0_row20" class="row_heading level0 row20" data-quarto-table-cell-role="th">warm_start</td>
-<td id="T_374de_row20_col0" class="data row20 col0">False</td>
-<td id="T_374de_row20_col1" class="data row20 col1"></td>
-<td id="T_374de_row20_col2" class="data row20 col2">False</td>
+<td id="T_e67e6_level0_row20" class="row_heading level0 row20" data-quarto-table-cell-role="th">warm_start</td>
+<td id="T_e67e6_row20_col0" class="data row20 col0">False</td>
+<td id="T_e67e6_row20_col1" class="data row20 col1"></td>
+<td id="T_e67e6_row20_col2" class="data row20 col2">False</td>
 </tr>
 </tbody>
 </table>
@@ -2173,69 +2173,69 @@ standard parameters are:
 <style type="text/css">
 </style>
 
-<div id="T_65533" class="quarto-float quarto-figure quarto-figure-center anchored" data-quarto-postprocess="true">
+<div id="T_84799" class="quarto-float quarto-figure quarto-figure-center anchored" data-quarto-postprocess="true">
 <figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="T_65533-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="T_84799-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Table&nbsp;2: KNN Regressor
 </figcaption>
-<div aria-describedby="T_65533-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<table id="T_65533" class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<div aria-describedby="T_84799-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table id="T_84799" class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
 <thead>
 <tr class="header">
 <th class="blank level0" data-quarto-table-cell-role="th">&nbsp;</th>
-<th id="T_65533_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">default_params</th>
-<th id="T_65533_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">hyperparameters0</th>
-<th id="T_65533_level0_col2" class="col_heading level0 col2" data-quarto-table-cell-role="th">best_parameters</th>
+<th id="T_84799_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">default_params</th>
+<th id="T_84799_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">hyperparameters0</th>
+<th id="T_84799_level0_col2" class="col_heading level0 col2" data-quarto-table-cell-role="th">best_parameters</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td id="T_65533_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">algorithm</td>
-<td id="T_65533_row0_col0" class="data row0 col0">auto</td>
-<td id="T_65533_row0_col1" class="data row0 col1">['ball_tree', 'kd_tree', 'brute', 'auto']</td>
-<td id="T_65533_row0_col2" class="data row0 col2">ball_tree</td>
+<td id="T_84799_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">algorithm</td>
+<td id="T_84799_row0_col0" class="data row0 col0">auto</td>
+<td id="T_84799_row0_col1" class="data row0 col1">['ball_tree', 'kd_tree', 'brute', 'auto']</td>
+<td id="T_84799_row0_col2" class="data row0 col2">ball_tree</td>
 </tr>
 <tr class="even">
-<td id="T_65533_level0_row1" class="row_heading level0 row1" data-quarto-table-cell-role="th">leaf_size</td>
-<td id="T_65533_row1_col0" class="data row1 col0">30</td>
-<td id="T_65533_row1_col1" class="data row1 col1">[ 5 10 15 20 25 30 35 40 45 50]</td>
-<td id="T_65533_row1_col2" class="data row1 col2">15</td>
+<td id="T_84799_level0_row1" class="row_heading level0 row1" data-quarto-table-cell-role="th">leaf_size</td>
+<td id="T_84799_row1_col0" class="data row1 col0">30</td>
+<td id="T_84799_row1_col1" class="data row1 col1">[ 5 10 15 20 25 30 35 40 45 50]</td>
+<td id="T_84799_row1_col2" class="data row1 col2">15</td>
 </tr>
 <tr class="odd">
-<td id="T_65533_level0_row2" class="row_heading level0 row2" data-quarto-table-cell-role="th">metric</td>
-<td id="T_65533_row2_col0" class="data row2 col0">minkowski</td>
-<td id="T_65533_row2_col1" class="data row2 col1">['minkowski', 'l1', 'l2']</td>
-<td id="T_65533_row2_col2" class="data row2 col2">minkowski</td>
+<td id="T_84799_level0_row2" class="row_heading level0 row2" data-quarto-table-cell-role="th">metric</td>
+<td id="T_84799_row2_col0" class="data row2 col0">minkowski</td>
+<td id="T_84799_row2_col1" class="data row2 col1">['minkowski', 'l1', 'l2']</td>
+<td id="T_84799_row2_col2" class="data row2 col2">minkowski</td>
 </tr>
 <tr class="even">
-<td id="T_65533_level0_row3" class="row_heading level0 row3" data-quarto-table-cell-role="th">metric_params</td>
-<td id="T_65533_row3_col0" class="data row3 col0"></td>
-<td id="T_65533_row3_col1" class="data row3 col1"></td>
-<td id="T_65533_row3_col2" class="data row3 col2">None</td>
+<td id="T_84799_level0_row3" class="row_heading level0 row3" data-quarto-table-cell-role="th">metric_params</td>
+<td id="T_84799_row3_col0" class="data row3 col0"></td>
+<td id="T_84799_row3_col1" class="data row3 col1"></td>
+<td id="T_84799_row3_col2" class="data row3 col2">None</td>
 </tr>
 <tr class="odd">
-<td id="T_65533_level0_row4" class="row_heading level0 row4" data-quarto-table-cell-role="th">n_jobs</td>
-<td id="T_65533_row4_col0" class="data row4 col0"></td>
-<td id="T_65533_row4_col1" class="data row4 col1"></td>
-<td id="T_65533_row4_col2" class="data row4 col2">None</td>
+<td id="T_84799_level0_row4" class="row_heading level0 row4" data-quarto-table-cell-role="th">n_jobs</td>
+<td id="T_84799_row4_col0" class="data row4 col0"></td>
+<td id="T_84799_row4_col1" class="data row4 col1"></td>
+<td id="T_84799_row4_col2" class="data row4 col2">None</td>
 </tr>
 <tr class="even">
-<td id="T_65533_level0_row5" class="row_heading level0 row5" data-quarto-table-cell-role="th">n_neighbors</td>
-<td id="T_65533_row5_col0" class="data row5 col0">5</td>
-<td id="T_65533_row5_col1" class="data row5 col1">[ 5 13 21 29 37 45]</td>
-<td id="T_65533_row5_col2" class="data row5 col2">21</td>
+<td id="T_84799_level0_row5" class="row_heading level0 row5" data-quarto-table-cell-role="th">n_neighbors</td>
+<td id="T_84799_row5_col0" class="data row5 col0">5</td>
+<td id="T_84799_row5_col1" class="data row5 col1">[ 5 13 21 29 37 45]</td>
+<td id="T_84799_row5_col2" class="data row5 col2">21</td>
 </tr>
 <tr class="odd">
-<td id="T_65533_level0_row6" class="row_heading level0 row6" data-quarto-table-cell-role="th">p</td>
-<td id="T_65533_row6_col0" class="data row6 col0">2</td>
-<td id="T_65533_row6_col1" class="data row6 col1">[1, 2]</td>
-<td id="T_65533_row6_col2" class="data row6 col2">1</td>
+<td id="T_84799_level0_row6" class="row_heading level0 row6" data-quarto-table-cell-role="th">p</td>
+<td id="T_84799_row6_col0" class="data row6 col0">2</td>
+<td id="T_84799_row6_col1" class="data row6 col1">[1, 2]</td>
+<td id="T_84799_row6_col2" class="data row6 col2">1</td>
 </tr>
 <tr class="even">
-<td id="T_65533_level0_row7" class="row_heading level0 row7" data-quarto-table-cell-role="th">weights</td>
-<td id="T_65533_row7_col0" class="data row7 col0">uniform</td>
-<td id="T_65533_row7_col1" class="data row7 col1">['uniform', 'distance']</td>
-<td id="T_65533_row7_col2" class="data row7 col2">uniform</td>
+<td id="T_84799_level0_row7" class="row_heading level0 row7" data-quarto-table-cell-role="th">weights</td>
+<td id="T_84799_row7_col0" class="data row7 col0">uniform</td>
+<td id="T_84799_row7_col1" class="data row7 col1">['uniform', 'distance']</td>
+<td id="T_84799_row7_col2" class="data row7 col2">uniform</td>
 </tr>
 </tbody>
 </table>
@@ -2291,123 +2291,123 @@ standard parameters are:
 <style type="text/css">
 </style>
 
-<div id="T_f2976" class="quarto-float quarto-figure quarto-figure-center anchored" data-quarto-postprocess="true">
+<div id="T_a5e76" class="quarto-float quarto-figure quarto-figure-center anchored" data-quarto-postprocess="true">
 <figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="T_f2976-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="T_a5e76-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Table&nbsp;3: Random Forest Regressor
 </figcaption>
-<div aria-describedby="T_f2976-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<table id="T_f2976" class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<div aria-describedby="T_a5e76-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table id="T_a5e76" class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
 <thead>
 <tr class="header">
 <th class="blank level0" data-quarto-table-cell-role="th">&nbsp;</th>
-<th id="T_f2976_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">default_params</th>
-<th id="T_f2976_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">hyperparameters0</th>
-<th id="T_f2976_level0_col2" class="col_heading level0 col2" data-quarto-table-cell-role="th">best_parameters</th>
+<th id="T_a5e76_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">default_params</th>
+<th id="T_a5e76_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">hyperparameters0</th>
+<th id="T_a5e76_level0_col2" class="col_heading level0 col2" data-quarto-table-cell-role="th">best_parameters</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td id="T_f2976_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">bootstrap</td>
-<td id="T_f2976_row0_col0" class="data row0 col0">True</td>
-<td id="T_f2976_row0_col1" class="data row0 col1">[True]</td>
-<td id="T_f2976_row0_col2" class="data row0 col2">True</td>
+<td id="T_a5e76_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">bootstrap</td>
+<td id="T_a5e76_row0_col0" class="data row0 col0">True</td>
+<td id="T_a5e76_row0_col1" class="data row0 col1">[True]</td>
+<td id="T_a5e76_row0_col2" class="data row0 col2">True</td>
 </tr>
 <tr class="even">
-<td id="T_f2976_level0_row1" class="row_heading level0 row1" data-quarto-table-cell-role="th">ccp_alpha</td>
-<td id="T_f2976_row1_col0" class="data row1 col0">0.000000</td>
-<td id="T_f2976_row1_col1" class="data row1 col1"></td>
-<td id="T_f2976_row1_col2" class="data row1 col2">0.000000</td>
+<td id="T_a5e76_level0_row1" class="row_heading level0 row1" data-quarto-table-cell-role="th">ccp_alpha</td>
+<td id="T_a5e76_row1_col0" class="data row1 col0">0.000000</td>
+<td id="T_a5e76_row1_col1" class="data row1 col1"></td>
+<td id="T_a5e76_row1_col2" class="data row1 col2">0.000000</td>
 </tr>
 <tr class="odd">
-<td id="T_f2976_level0_row2" class="row_heading level0 row2" data-quarto-table-cell-role="th">criterion</td>
-<td id="T_f2976_row2_col0" class="data row2 col0">squared_error</td>
-<td id="T_f2976_row2_col1" class="data row2 col1">['squared_error', 'friedman_mse']</td>
-<td id="T_f2976_row2_col2" class="data row2 col2">friedman_mse</td>
+<td id="T_a5e76_level0_row2" class="row_heading level0 row2" data-quarto-table-cell-role="th">criterion</td>
+<td id="T_a5e76_row2_col0" class="data row2 col0">squared_error</td>
+<td id="T_a5e76_row2_col1" class="data row2 col1">['squared_error', 'friedman_mse']</td>
+<td id="T_a5e76_row2_col2" class="data row2 col2">friedman_mse</td>
 </tr>
 <tr class="even">
-<td id="T_f2976_level0_row3" class="row_heading level0 row3" data-quarto-table-cell-role="th">max_depth</td>
-<td id="T_f2976_row3_col0" class="data row3 col0"></td>
-<td id="T_f2976_row3_col1" class="data row3 col1">[3, 9, 16, 23, 30]</td>
-<td id="T_f2976_row3_col2" class="data row3 col2">9</td>
+<td id="T_a5e76_level0_row3" class="row_heading level0 row3" data-quarto-table-cell-role="th">max_depth</td>
+<td id="T_a5e76_row3_col0" class="data row3 col0"></td>
+<td id="T_a5e76_row3_col1" class="data row3 col1">[3, 9, 16, 23, 30]</td>
+<td id="T_a5e76_row3_col2" class="data row3 col2">9</td>
 </tr>
 <tr class="odd">
-<td id="T_f2976_level0_row4" class="row_heading level0 row4" data-quarto-table-cell-role="th">max_features</td>
-<td id="T_f2976_row4_col0" class="data row4 col0">1.000000</td>
-<td id="T_f2976_row4_col1" class="data row4 col1">['sqrt', 'log2', 0.6, 1.0]</td>
-<td id="T_f2976_row4_col2" class="data row4 col2">log2</td>
+<td id="T_a5e76_level0_row4" class="row_heading level0 row4" data-quarto-table-cell-role="th">max_features</td>
+<td id="T_a5e76_row4_col0" class="data row4 col0">1.000000</td>
+<td id="T_a5e76_row4_col1" class="data row4 col1">['sqrt', 'log2', 0.6, 1.0]</td>
+<td id="T_a5e76_row4_col2" class="data row4 col2">log2</td>
 </tr>
 <tr class="even">
-<td id="T_f2976_level0_row5" class="row_heading level0 row5" data-quarto-table-cell-role="th">max_leaf_nodes</td>
-<td id="T_f2976_row5_col0" class="data row5 col0"></td>
-<td id="T_f2976_row5_col1" class="data row5 col1"></td>
-<td id="T_f2976_row5_col2" class="data row5 col2">None</td>
+<td id="T_a5e76_level0_row5" class="row_heading level0 row5" data-quarto-table-cell-role="th">max_leaf_nodes</td>
+<td id="T_a5e76_row5_col0" class="data row5 col0"></td>
+<td id="T_a5e76_row5_col1" class="data row5 col1"></td>
+<td id="T_a5e76_row5_col2" class="data row5 col2">None</td>
 </tr>
 <tr class="odd">
-<td id="T_f2976_level0_row6" class="row_heading level0 row6" data-quarto-table-cell-role="th">max_samples</td>
-<td id="T_f2976_row6_col0" class="data row6 col0"></td>
-<td id="T_f2976_row6_col1" class="data row6 col1"></td>
-<td id="T_f2976_row6_col2" class="data row6 col2">None</td>
+<td id="T_a5e76_level0_row6" class="row_heading level0 row6" data-quarto-table-cell-role="th">max_samples</td>
+<td id="T_a5e76_row6_col0" class="data row6 col0"></td>
+<td id="T_a5e76_row6_col1" class="data row6 col1"></td>
+<td id="T_a5e76_row6_col2" class="data row6 col2">None</td>
 </tr>
 <tr class="even">
-<td id="T_f2976_level0_row7" class="row_heading level0 row7" data-quarto-table-cell-role="th">min_impurity_decrease</td>
-<td id="T_f2976_row7_col0" class="data row7 col0">0.000000</td>
-<td id="T_f2976_row7_col1" class="data row7 col1"></td>
-<td id="T_f2976_row7_col2" class="data row7 col2">0.000000</td>
+<td id="T_a5e76_level0_row7" class="row_heading level0 row7" data-quarto-table-cell-role="th">min_impurity_decrease</td>
+<td id="T_a5e76_row7_col0" class="data row7 col0">0.000000</td>
+<td id="T_a5e76_row7_col1" class="data row7 col1"></td>
+<td id="T_a5e76_row7_col2" class="data row7 col2">0.000000</td>
 </tr>
 <tr class="odd">
-<td id="T_f2976_level0_row8" class="row_heading level0 row8" data-quarto-table-cell-role="th">min_samples_leaf</td>
-<td id="T_f2976_row8_col0" class="data row8 col0">1</td>
-<td id="T_f2976_row8_col1" class="data row8 col1">[1 4 7]</td>
-<td id="T_f2976_row8_col2" class="data row8 col2">1</td>
+<td id="T_a5e76_level0_row8" class="row_heading level0 row8" data-quarto-table-cell-role="th">min_samples_leaf</td>
+<td id="T_a5e76_row8_col0" class="data row8 col0">1</td>
+<td id="T_a5e76_row8_col1" class="data row8 col1">[1 4 7]</td>
+<td id="T_a5e76_row8_col2" class="data row8 col2">1</td>
 </tr>
 <tr class="even">
-<td id="T_f2976_level0_row9" class="row_heading level0 row9" data-quarto-table-cell-role="th">min_samples_split</td>
-<td id="T_f2976_row9_col0" class="data row9 col0">2</td>
-<td id="T_f2976_row9_col1" class="data row9 col1">[2, 4, 6]</td>
-<td id="T_f2976_row9_col2" class="data row9 col2">4</td>
+<td id="T_a5e76_level0_row9" class="row_heading level0 row9" data-quarto-table-cell-role="th">min_samples_split</td>
+<td id="T_a5e76_row9_col0" class="data row9 col0">2</td>
+<td id="T_a5e76_row9_col1" class="data row9 col1">[2, 4, 6]</td>
+<td id="T_a5e76_row9_col2" class="data row9 col2">4</td>
 </tr>
 <tr class="odd">
-<td id="T_f2976_level0_row10" class="row_heading level0 row10" data-quarto-table-cell-role="th">min_weight_fraction_leaf</td>
-<td id="T_f2976_row10_col0" class="data row10 col0">0.000000</td>
-<td id="T_f2976_row10_col1" class="data row10 col1"></td>
-<td id="T_f2976_row10_col2" class="data row10 col2">0.000000</td>
+<td id="T_a5e76_level0_row10" class="row_heading level0 row10" data-quarto-table-cell-role="th">min_weight_fraction_leaf</td>
+<td id="T_a5e76_row10_col0" class="data row10 col0">0.000000</td>
+<td id="T_a5e76_row10_col1" class="data row10 col1"></td>
+<td id="T_a5e76_row10_col2" class="data row10 col2">0.000000</td>
 </tr>
 <tr class="even">
-<td id="T_f2976_level0_row11" class="row_heading level0 row11" data-quarto-table-cell-role="th">n_estimators</td>
-<td id="T_f2976_row11_col0" class="data row11 col0">100</td>
-<td id="T_f2976_row11_col1" class="data row11 col1">[50, 87, 125, 162, 200]</td>
-<td id="T_f2976_row11_col2" class="data row11 col2">200</td>
+<td id="T_a5e76_level0_row11" class="row_heading level0 row11" data-quarto-table-cell-role="th">n_estimators</td>
+<td id="T_a5e76_row11_col0" class="data row11 col0">100</td>
+<td id="T_a5e76_row11_col1" class="data row11 col1">[50, 87, 125, 162, 200]</td>
+<td id="T_a5e76_row11_col2" class="data row11 col2">200</td>
 </tr>
 <tr class="odd">
-<td id="T_f2976_level0_row12" class="row_heading level0 row12" data-quarto-table-cell-role="th">n_jobs</td>
-<td id="T_f2976_row12_col0" class="data row12 col0"></td>
-<td id="T_f2976_row12_col1" class="data row12 col1"></td>
-<td id="T_f2976_row12_col2" class="data row12 col2">None</td>
+<td id="T_a5e76_level0_row12" class="row_heading level0 row12" data-quarto-table-cell-role="th">n_jobs</td>
+<td id="T_a5e76_row12_col0" class="data row12 col0"></td>
+<td id="T_a5e76_row12_col1" class="data row12 col1"></td>
+<td id="T_a5e76_row12_col2" class="data row12 col2">None</td>
 </tr>
 <tr class="even">
-<td id="T_f2976_level0_row13" class="row_heading level0 row13" data-quarto-table-cell-role="th">oob_score</td>
-<td id="T_f2976_row13_col0" class="data row13 col0">False</td>
-<td id="T_f2976_row13_col1" class="data row13 col1"></td>
-<td id="T_f2976_row13_col2" class="data row13 col2">False</td>
+<td id="T_a5e76_level0_row13" class="row_heading level0 row13" data-quarto-table-cell-role="th">oob_score</td>
+<td id="T_a5e76_row13_col0" class="data row13 col0">False</td>
+<td id="T_a5e76_row13_col1" class="data row13 col1"></td>
+<td id="T_a5e76_row13_col2" class="data row13 col2">False</td>
 </tr>
 <tr class="odd">
-<td id="T_f2976_level0_row14" class="row_heading level0 row14" data-quarto-table-cell-role="th">random_state</td>
-<td id="T_f2976_row14_col0" class="data row14 col0">42</td>
-<td id="T_f2976_row14_col1" class="data row14 col1"></td>
-<td id="T_f2976_row14_col2" class="data row14 col2">42</td>
+<td id="T_a5e76_level0_row14" class="row_heading level0 row14" data-quarto-table-cell-role="th">random_state</td>
+<td id="T_a5e76_row14_col0" class="data row14 col0">42</td>
+<td id="T_a5e76_row14_col1" class="data row14 col1"></td>
+<td id="T_a5e76_row14_col2" class="data row14 col2">42</td>
 </tr>
 <tr class="even">
-<td id="T_f2976_level0_row15" class="row_heading level0 row15" data-quarto-table-cell-role="th">verbose</td>
-<td id="T_f2976_row15_col0" class="data row15 col0">0</td>
-<td id="T_f2976_row15_col1" class="data row15 col1"></td>
-<td id="T_f2976_row15_col2" class="data row15 col2">0</td>
+<td id="T_a5e76_level0_row15" class="row_heading level0 row15" data-quarto-table-cell-role="th">verbose</td>
+<td id="T_a5e76_row15_col0" class="data row15 col0">0</td>
+<td id="T_a5e76_row15_col1" class="data row15 col1"></td>
+<td id="T_a5e76_row15_col2" class="data row15 col2">0</td>
 </tr>
 <tr class="odd">
-<td id="T_f2976_level0_row16" class="row_heading level0 row16" data-quarto-table-cell-role="th">warm_start</td>
-<td id="T_f2976_row16_col0" class="data row16 col0">False</td>
-<td id="T_f2976_row16_col1" class="data row16 col1"></td>
-<td id="T_f2976_row16_col2" class="data row16 col2">False</td>
+<td id="T_a5e76_level0_row16" class="row_heading level0 row16" data-quarto-table-cell-role="th">warm_start</td>
+<td id="T_a5e76_row16_col0" class="data row16 col0">False</td>
+<td id="T_a5e76_row16_col1" class="data row16 col1"></td>
+<td id="T_a5e76_row16_col2" class="data row16 col2">False</td>
 </tr>
 </tbody>
 </table>
@@ -2451,87 +2451,87 @@ standard parameters are:
 <style type="text/css">
 </style>
 
-<div id="T_1d012" class="quarto-float quarto-figure quarto-figure-center anchored" data-quarto-postprocess="true">
+<div id="T_78ba0" class="quarto-float quarto-figure quarto-figure-center anchored" data-quarto-postprocess="true">
 <figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="T_1d012-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="T_78ba0-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Table&nbsp;4: Support Vector Regression
 </figcaption>
-<div aria-describedby="T_1d012-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<table id="T_1d012" class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<div aria-describedby="T_78ba0-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table id="T_78ba0" class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
 <thead>
 <tr class="header">
 <th class="blank level0" data-quarto-table-cell-role="th">&nbsp;</th>
-<th id="T_1d012_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">default_params</th>
-<th id="T_1d012_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">hyperparameters0</th>
-<th id="T_1d012_level0_col2" class="col_heading level0 col2" data-quarto-table-cell-role="th">best_parameters</th>
+<th id="T_78ba0_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">default_params</th>
+<th id="T_78ba0_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">hyperparameters0</th>
+<th id="T_78ba0_level0_col2" class="col_heading level0 col2" data-quarto-table-cell-role="th">best_parameters</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td id="T_1d012_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">C</td>
-<td id="T_1d012_row0_col0" class="data row0 col0">1.000000</td>
-<td id="T_1d012_row0_col1" class="data row0 col1">[0.01, 0.1, 1.0, 10, 100]</td>
-<td id="T_1d012_row0_col2" class="data row0 col2">0.100000</td>
+<td id="T_78ba0_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">C</td>
+<td id="T_78ba0_row0_col0" class="data row0 col0">1.000000</td>
+<td id="T_78ba0_row0_col1" class="data row0 col1">[0.01, 0.1, 1.0, 10, 100]</td>
+<td id="T_78ba0_row0_col2" class="data row0 col2">0.100000</td>
 </tr>
 <tr class="even">
-<td id="T_1d012_level0_row1" class="row_heading level0 row1" data-quarto-table-cell-role="th">cache_size</td>
-<td id="T_1d012_row1_col0" class="data row1 col0">200</td>
-<td id="T_1d012_row1_col1" class="data row1 col1">[10000]</td>
-<td id="T_1d012_row1_col2" class="data row1 col2">10000</td>
+<td id="T_78ba0_level0_row1" class="row_heading level0 row1" data-quarto-table-cell-role="th">cache_size</td>
+<td id="T_78ba0_row1_col0" class="data row1 col0">200</td>
+<td id="T_78ba0_row1_col1" class="data row1 col1">[10000]</td>
+<td id="T_78ba0_row1_col2" class="data row1 col2">10000</td>
 </tr>
 <tr class="odd">
-<td id="T_1d012_level0_row2" class="row_heading level0 row2" data-quarto-table-cell-role="th">coef0</td>
-<td id="T_1d012_row2_col0" class="data row2 col0">0.000000</td>
-<td id="T_1d012_row2_col1" class="data row2 col1">[0.0, 0.1, 0.2]</td>
-<td id="T_1d012_row2_col2" class="data row2 col2">0.100000</td>
+<td id="T_78ba0_level0_row2" class="row_heading level0 row2" data-quarto-table-cell-role="th">coef0</td>
+<td id="T_78ba0_row2_col0" class="data row2 col0">0.000000</td>
+<td id="T_78ba0_row2_col1" class="data row2 col1">[0.0, 0.1, 0.2]</td>
+<td id="T_78ba0_row2_col2" class="data row2 col2">0.100000</td>
 </tr>
 <tr class="even">
-<td id="T_1d012_level0_row3" class="row_heading level0 row3" data-quarto-table-cell-role="th">degree</td>
-<td id="T_1d012_row3_col0" class="data row3 col0">3</td>
-<td id="T_1d012_row3_col1" class="data row3 col1"></td>
-<td id="T_1d012_row3_col2" class="data row3 col2">3</td>
+<td id="T_78ba0_level0_row3" class="row_heading level0 row3" data-quarto-table-cell-role="th">degree</td>
+<td id="T_78ba0_row3_col0" class="data row3 col0">3</td>
+<td id="T_78ba0_row3_col1" class="data row3 col1"></td>
+<td id="T_78ba0_row3_col2" class="data row3 col2">3</td>
 </tr>
 <tr class="odd">
-<td id="T_1d012_level0_row4" class="row_heading level0 row4" data-quarto-table-cell-role="th">epsilon</td>
-<td id="T_1d012_row4_col0" class="data row4 col0">0.100000</td>
-<td id="T_1d012_row4_col1" class="data row4 col1">[0.001, 0.01, 0.1, 1.0, 10]</td>
-<td id="T_1d012_row4_col2" class="data row4 col2">0.100000</td>
+<td id="T_78ba0_level0_row4" class="row_heading level0 row4" data-quarto-table-cell-role="th">epsilon</td>
+<td id="T_78ba0_row4_col0" class="data row4 col0">0.100000</td>
+<td id="T_78ba0_row4_col1" class="data row4 col1">[0.001, 0.01, 0.1, 1.0, 10]</td>
+<td id="T_78ba0_row4_col2" class="data row4 col2">0.100000</td>
 </tr>
 <tr class="even">
-<td id="T_1d012_level0_row5" class="row_heading level0 row5" data-quarto-table-cell-role="th">gamma</td>
-<td id="T_1d012_row5_col0" class="data row5 col0">scale</td>
-<td id="T_1d012_row5_col1" class="data row5 col1">['auto', 'scale']</td>
-<td id="T_1d012_row5_col2" class="data row5 col2">scale</td>
+<td id="T_78ba0_level0_row5" class="row_heading level0 row5" data-quarto-table-cell-role="th">gamma</td>
+<td id="T_78ba0_row5_col0" class="data row5 col0">scale</td>
+<td id="T_78ba0_row5_col1" class="data row5 col1">['auto', 'scale']</td>
+<td id="T_78ba0_row5_col2" class="data row5 col2">scale</td>
 </tr>
 <tr class="odd">
-<td id="T_1d012_level0_row6" class="row_heading level0 row6" data-quarto-table-cell-role="th">kernel</td>
-<td id="T_1d012_row6_col0" class="data row6 col0">rbf</td>
-<td id="T_1d012_row6_col1" class="data row6 col1">['rbf', 'sigmoid']</td>
-<td id="T_1d012_row6_col2" class="data row6 col2">rbf</td>
+<td id="T_78ba0_level0_row6" class="row_heading level0 row6" data-quarto-table-cell-role="th">kernel</td>
+<td id="T_78ba0_row6_col0" class="data row6 col0">rbf</td>
+<td id="T_78ba0_row6_col1" class="data row6 col1">['rbf', 'sigmoid']</td>
+<td id="T_78ba0_row6_col2" class="data row6 col2">rbf</td>
 </tr>
 <tr class="even">
-<td id="T_1d012_level0_row7" class="row_heading level0 row7" data-quarto-table-cell-role="th">max_iter</td>
-<td id="T_1d012_row7_col0" class="data row7 col0">-1</td>
-<td id="T_1d012_row7_col1" class="data row7 col1"></td>
-<td id="T_1d012_row7_col2" class="data row7 col2">-1</td>
+<td id="T_78ba0_level0_row7" class="row_heading level0 row7" data-quarto-table-cell-role="th">max_iter</td>
+<td id="T_78ba0_row7_col0" class="data row7 col0">-1</td>
+<td id="T_78ba0_row7_col1" class="data row7 col1"></td>
+<td id="T_78ba0_row7_col2" class="data row7 col2">-1</td>
 </tr>
 <tr class="odd">
-<td id="T_1d012_level0_row8" class="row_heading level0 row8" data-quarto-table-cell-role="th">shrinking</td>
-<td id="T_1d012_row8_col0" class="data row8 col0">True</td>
-<td id="T_1d012_row8_col1" class="data row8 col1">[True, False]</td>
-<td id="T_1d012_row8_col2" class="data row8 col2">False</td>
+<td id="T_78ba0_level0_row8" class="row_heading level0 row8" data-quarto-table-cell-role="th">shrinking</td>
+<td id="T_78ba0_row8_col0" class="data row8 col0">True</td>
+<td id="T_78ba0_row8_col1" class="data row8 col1">[True, False]</td>
+<td id="T_78ba0_row8_col2" class="data row8 col2">False</td>
 </tr>
 <tr class="even">
-<td id="T_1d012_level0_row9" class="row_heading level0 row9" data-quarto-table-cell-role="th">tol</td>
-<td id="T_1d012_row9_col0" class="data row9 col0">0.001000</td>
-<td id="T_1d012_row9_col1" class="data row9 col1">[0.0001, 0.001, 0.01, 0.1, 1.0]</td>
-<td id="T_1d012_row9_col2" class="data row9 col2">0.010000</td>
+<td id="T_78ba0_level0_row9" class="row_heading level0 row9" data-quarto-table-cell-role="th">tol</td>
+<td id="T_78ba0_row9_col0" class="data row9 col0">0.001000</td>
+<td id="T_78ba0_row9_col1" class="data row9 col1">[0.0001, 0.001, 0.01, 0.1, 1.0]</td>
+<td id="T_78ba0_row9_col2" class="data row9 col2">0.010000</td>
 </tr>
 <tr class="odd">
-<td id="T_1d012_level0_row10" class="row_heading level0 row10" data-quarto-table-cell-role="th">verbose</td>
-<td id="T_1d012_row10_col0" class="data row10 col0">False</td>
-<td id="T_1d012_row10_col1" class="data row10 col1"></td>
-<td id="T_1d012_row10_col2" class="data row10 col2">False</td>
+<td id="T_78ba0_level0_row10" class="row_heading level0 row10" data-quarto-table-cell-role="th">verbose</td>
+<td id="T_78ba0_row10_col0" class="data row10 col0">False</td>
+<td id="T_78ba0_row10_col1" class="data row10 col1"></td>
+<td id="T_78ba0_row10_col2" class="data row10 col2">False</td>
 </tr>
 </tbody>
 </table>
@@ -2593,195 +2593,195 @@ standard parameters are:
 <style type="text/css">
 </style>
 
-<div id="T_95eaf" class="quarto-float quarto-figure quarto-figure-center anchored" data-quarto-postprocess="true">
+<div id="T_bc2aa" class="quarto-float quarto-figure quarto-figure-center anchored" data-quarto-postprocess="true">
 <figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="T_95eaf-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="T_bc2aa-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Table&nbsp;5: Linear Model with SGD
 </figcaption>
-<div aria-describedby="T_95eaf-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<table id="T_95eaf" class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<div aria-describedby="T_bc2aa-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table id="T_bc2aa" class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
 <thead>
 <tr class="header">
 <th class="blank level0" data-quarto-table-cell-role="th">&nbsp;</th>
-<th id="T_95eaf_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">default_params</th>
-<th id="T_95eaf_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">hyperparameters0</th>
-<th id="T_95eaf_level0_col2" class="col_heading level0 col2" data-quarto-table-cell-role="th">hyperparameters1</th>
-<th id="T_95eaf_level0_col3" class="col_heading level0 col3" data-quarto-table-cell-role="th">hyperparameters2</th>
-<th id="T_95eaf_level0_col4" class="col_heading level0 col4" data-quarto-table-cell-role="th">hyperparameters3</th>
-<th id="T_95eaf_level0_col5" class="col_heading level0 col5" data-quarto-table-cell-role="th">best_parameters</th>
+<th id="T_bc2aa_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">default_params</th>
+<th id="T_bc2aa_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">hyperparameters0</th>
+<th id="T_bc2aa_level0_col2" class="col_heading level0 col2" data-quarto-table-cell-role="th">hyperparameters1</th>
+<th id="T_bc2aa_level0_col3" class="col_heading level0 col3" data-quarto-table-cell-role="th">hyperparameters2</th>
+<th id="T_bc2aa_level0_col4" class="col_heading level0 col4" data-quarto-table-cell-role="th">hyperparameters3</th>
+<th id="T_bc2aa_level0_col5" class="col_heading level0 col5" data-quarto-table-cell-role="th">best_parameters</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td id="T_95eaf_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">alpha</td>
-<td id="T_95eaf_row0_col0" class="data row0 col0">0.000100</td>
-<td id="T_95eaf_row0_col1" class="data row0 col1">[1e-05, 0.0001, 0.001, 0.01, 0.1]</td>
-<td id="T_95eaf_row0_col2" class="data row0 col2">[1e-05, 0.0001, 0.001, 0.01, 0.1]</td>
-<td id="T_95eaf_row0_col3" class="data row0 col3">[1e-05, 0.0001, 0.001, 0.01, 0.1]</td>
-<td id="T_95eaf_row0_col4" class="data row0 col4">[1e-05, 0.0001, 0.001, 0.01, 0.1]</td>
-<td id="T_95eaf_row0_col5" class="data row0 col5">0.000010</td>
+<td id="T_bc2aa_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">alpha</td>
+<td id="T_bc2aa_row0_col0" class="data row0 col0">0.000100</td>
+<td id="T_bc2aa_row0_col1" class="data row0 col1">[1e-05, 0.0001, 0.001, 0.01, 0.1]</td>
+<td id="T_bc2aa_row0_col2" class="data row0 col2">[1e-05, 0.0001, 0.001, 0.01, 0.1]</td>
+<td id="T_bc2aa_row0_col3" class="data row0 col3">[1e-05, 0.0001, 0.001, 0.01, 0.1]</td>
+<td id="T_bc2aa_row0_col4" class="data row0 col4">[1e-05, 0.0001, 0.001, 0.01, 0.1]</td>
+<td id="T_bc2aa_row0_col5" class="data row0 col5">0.000010</td>
 </tr>
 <tr class="even">
-<td id="T_95eaf_level0_row1" class="row_heading level0 row1" data-quarto-table-cell-role="th">average</td>
-<td id="T_95eaf_row1_col0" class="data row1 col0">False</td>
-<td id="T_95eaf_row1_col1" class="data row1 col1"></td>
-<td id="T_95eaf_row1_col2" class="data row1 col2"></td>
-<td id="T_95eaf_row1_col3" class="data row1 col3"></td>
-<td id="T_95eaf_row1_col4" class="data row1 col4"></td>
-<td id="T_95eaf_row1_col5" class="data row1 col5">False</td>
+<td id="T_bc2aa_level0_row1" class="row_heading level0 row1" data-quarto-table-cell-role="th">average</td>
+<td id="T_bc2aa_row1_col0" class="data row1 col0">False</td>
+<td id="T_bc2aa_row1_col1" class="data row1 col1"></td>
+<td id="T_bc2aa_row1_col2" class="data row1 col2"></td>
+<td id="T_bc2aa_row1_col3" class="data row1 col3"></td>
+<td id="T_bc2aa_row1_col4" class="data row1 col4"></td>
+<td id="T_bc2aa_row1_col5" class="data row1 col5">False</td>
 </tr>
 <tr class="odd">
-<td id="T_95eaf_level0_row2" class="row_heading level0 row2" data-quarto-table-cell-role="th">early_stopping</td>
-<td id="T_95eaf_row2_col0" class="data row2 col0">False</td>
-<td id="T_95eaf_row2_col1" class="data row2 col1"></td>
-<td id="T_95eaf_row2_col2" class="data row2 col2"></td>
-<td id="T_95eaf_row2_col3" class="data row2 col3"></td>
-<td id="T_95eaf_row2_col4" class="data row2 col4"></td>
-<td id="T_95eaf_row2_col5" class="data row2 col5">False</td>
+<td id="T_bc2aa_level0_row2" class="row_heading level0 row2" data-quarto-table-cell-role="th">early_stopping</td>
+<td id="T_bc2aa_row2_col0" class="data row2 col0">False</td>
+<td id="T_bc2aa_row2_col1" class="data row2 col1"></td>
+<td id="T_bc2aa_row2_col2" class="data row2 col2"></td>
+<td id="T_bc2aa_row2_col3" class="data row2 col3"></td>
+<td id="T_bc2aa_row2_col4" class="data row2 col4"></td>
+<td id="T_bc2aa_row2_col5" class="data row2 col5">False</td>
 </tr>
 <tr class="even">
-<td id="T_95eaf_level0_row3" class="row_heading level0 row3" data-quarto-table-cell-role="th">epsilon</td>
-<td id="T_95eaf_row3_col0" class="data row3 col0">0.100000</td>
-<td id="T_95eaf_row3_col1" class="data row3 col1">[0.01, 0.1, 0.5]</td>
-<td id="T_95eaf_row3_col2" class="data row3 col2">[0.01, 0.1, 0.5]</td>
-<td id="T_95eaf_row3_col3" class="data row3 col3">[0.01, 0.1, 0.5]</td>
-<td id="T_95eaf_row3_col4" class="data row3 col4">[0.01, 0.1, 0.5]</td>
-<td id="T_95eaf_row3_col5" class="data row3 col5">0.500000</td>
+<td id="T_bc2aa_level0_row3" class="row_heading level0 row3" data-quarto-table-cell-role="th">epsilon</td>
+<td id="T_bc2aa_row3_col0" class="data row3 col0">0.100000</td>
+<td id="T_bc2aa_row3_col1" class="data row3 col1">[0.01, 0.1, 0.5]</td>
+<td id="T_bc2aa_row3_col2" class="data row3 col2">[0.01, 0.1, 0.5]</td>
+<td id="T_bc2aa_row3_col3" class="data row3 col3">[0.01, 0.1, 0.5]</td>
+<td id="T_bc2aa_row3_col4" class="data row3 col4">[0.01, 0.1, 0.5]</td>
+<td id="T_bc2aa_row3_col5" class="data row3 col5">0.500000</td>
 </tr>
 <tr class="odd">
-<td id="T_95eaf_level0_row4" class="row_heading level0 row4" data-quarto-table-cell-role="th">eta0</td>
-<td id="T_95eaf_row4_col0" class="data row4 col0">0.010000</td>
-<td id="T_95eaf_row4_col1" class="data row4 col1">[0.001, 0.01, 0.1]</td>
-<td id="T_95eaf_row4_col2" class="data row4 col2">[0.001, 0.01, 0.1]</td>
-<td id="T_95eaf_row4_col3" class="data row4 col3">[0.001, 0.01, 0.1]</td>
-<td id="T_95eaf_row4_col4" class="data row4 col4">[0.001, 0.01, 0.1]</td>
-<td id="T_95eaf_row4_col5" class="data row4 col5">0.100000</td>
+<td id="T_bc2aa_level0_row4" class="row_heading level0 row4" data-quarto-table-cell-role="th">eta0</td>
+<td id="T_bc2aa_row4_col0" class="data row4 col0">0.010000</td>
+<td id="T_bc2aa_row4_col1" class="data row4 col1">[0.001, 0.01, 0.1]</td>
+<td id="T_bc2aa_row4_col2" class="data row4 col2">[0.001, 0.01, 0.1]</td>
+<td id="T_bc2aa_row4_col3" class="data row4 col3">[0.001, 0.01, 0.1]</td>
+<td id="T_bc2aa_row4_col4" class="data row4 col4">[0.001, 0.01, 0.1]</td>
+<td id="T_bc2aa_row4_col5" class="data row4 col5">0.100000</td>
 </tr>
 <tr class="even">
-<td id="T_95eaf_level0_row5" class="row_heading level0 row5" data-quarto-table-cell-role="th">fit_intercept</td>
-<td id="T_95eaf_row5_col0" class="data row5 col0">True</td>
-<td id="T_95eaf_row5_col1" class="data row5 col1"></td>
-<td id="T_95eaf_row5_col2" class="data row5 col2"></td>
-<td id="T_95eaf_row5_col3" class="data row5 col3"></td>
-<td id="T_95eaf_row5_col4" class="data row5 col4"></td>
-<td id="T_95eaf_row5_col5" class="data row5 col5">True</td>
+<td id="T_bc2aa_level0_row5" class="row_heading level0 row5" data-quarto-table-cell-role="th">fit_intercept</td>
+<td id="T_bc2aa_row5_col0" class="data row5 col0">True</td>
+<td id="T_bc2aa_row5_col1" class="data row5 col1"></td>
+<td id="T_bc2aa_row5_col2" class="data row5 col2"></td>
+<td id="T_bc2aa_row5_col3" class="data row5 col3"></td>
+<td id="T_bc2aa_row5_col4" class="data row5 col4"></td>
+<td id="T_bc2aa_row5_col5" class="data row5 col5">True</td>
 </tr>
 <tr class="odd">
-<td id="T_95eaf_level0_row6" class="row_heading level0 row6" data-quarto-table-cell-role="th">l1_ratio</td>
-<td id="T_95eaf_row6_col0" class="data row6 col0">0.150000</td>
-<td id="T_95eaf_row6_col1" class="data row6 col1"></td>
-<td id="T_95eaf_row6_col2" class="data row6 col2"></td>
-<td id="T_95eaf_row6_col3" class="data row6 col3">[0.1, 0.15, 0.2, 0.5]</td>
-<td id="T_95eaf_row6_col4" class="data row6 col4">[0.1, 0.15, 0.2, 0.5]</td>
-<td id="T_95eaf_row6_col5" class="data row6 col5">0.500000</td>
+<td id="T_bc2aa_level0_row6" class="row_heading level0 row6" data-quarto-table-cell-role="th">l1_ratio</td>
+<td id="T_bc2aa_row6_col0" class="data row6 col0">0.150000</td>
+<td id="T_bc2aa_row6_col1" class="data row6 col1"></td>
+<td id="T_bc2aa_row6_col2" class="data row6 col2"></td>
+<td id="T_bc2aa_row6_col3" class="data row6 col3">[0.1, 0.15, 0.2, 0.5]</td>
+<td id="T_bc2aa_row6_col4" class="data row6 col4">[0.1, 0.15, 0.2, 0.5]</td>
+<td id="T_bc2aa_row6_col5" class="data row6 col5">0.500000</td>
 </tr>
 <tr class="even">
-<td id="T_95eaf_level0_row7" class="row_heading level0 row7" data-quarto-table-cell-role="th">learning_rate</td>
-<td id="T_95eaf_row7_col0" class="data row7 col0">invscaling</td>
-<td id="T_95eaf_row7_col1" class="data row7 col1">['constant', 'optimal', 'invscaling', 'adaptive']</td>
-<td id="T_95eaf_row7_col2" class="data row7 col2">['constant', 'optimal', 'invscaling', 'adaptive']</td>
-<td id="T_95eaf_row7_col3" class="data row7 col3">['constant', 'optimal', 'invscaling', 'adaptive']</td>
-<td id="T_95eaf_row7_col4" class="data row7 col4">['constant', 'optimal', 'invscaling', 'adaptive']</td>
-<td id="T_95eaf_row7_col5" class="data row7 col5">adaptive</td>
+<td id="T_bc2aa_level0_row7" class="row_heading level0 row7" data-quarto-table-cell-role="th">learning_rate</td>
+<td id="T_bc2aa_row7_col0" class="data row7 col0">invscaling</td>
+<td id="T_bc2aa_row7_col1" class="data row7 col1">['constant', 'optimal', 'invscaling', 'adaptive']</td>
+<td id="T_bc2aa_row7_col2" class="data row7 col2">['constant', 'optimal', 'invscaling', 'adaptive']</td>
+<td id="T_bc2aa_row7_col3" class="data row7 col3">['constant', 'optimal', 'invscaling', 'adaptive']</td>
+<td id="T_bc2aa_row7_col4" class="data row7 col4">['constant', 'optimal', 'invscaling', 'adaptive']</td>
+<td id="T_bc2aa_row7_col5" class="data row7 col5">adaptive</td>
 </tr>
 <tr class="odd">
-<td id="T_95eaf_level0_row8" class="row_heading level0 row8" data-quarto-table-cell-role="th">loss</td>
-<td id="T_95eaf_row8_col0" class="data row8 col0">squared_error</td>
-<td id="T_95eaf_row8_col1" class="data row8 col1">['squared_error']</td>
-<td id="T_95eaf_row8_col2" class="data row8 col2">['epsilon_insensitive', 'squared_epsilon_insensitive']</td>
-<td id="T_95eaf_row8_col3" class="data row8 col3">['squared_error']</td>
-<td id="T_95eaf_row8_col4" class="data row8 col4">['epsilon_insensitive', 'squared_epsilon_insensitive']</td>
-<td id="T_95eaf_row8_col5" class="data row8 col5">squared_error</td>
+<td id="T_bc2aa_level0_row8" class="row_heading level0 row8" data-quarto-table-cell-role="th">loss</td>
+<td id="T_bc2aa_row8_col0" class="data row8 col0">squared_error</td>
+<td id="T_bc2aa_row8_col1" class="data row8 col1">['squared_error']</td>
+<td id="T_bc2aa_row8_col2" class="data row8 col2">['epsilon_insensitive', 'squared_epsilon_insensitive']</td>
+<td id="T_bc2aa_row8_col3" class="data row8 col3">['squared_error']</td>
+<td id="T_bc2aa_row8_col4" class="data row8 col4">['epsilon_insensitive', 'squared_epsilon_insensitive']</td>
+<td id="T_bc2aa_row8_col5" class="data row8 col5">squared_error</td>
 </tr>
 <tr class="even">
-<td id="T_95eaf_level0_row9" class="row_heading level0 row9" data-quarto-table-cell-role="th">max_iter</td>
-<td id="T_95eaf_row9_col0" class="data row9 col0">100000000</td>
-<td id="T_95eaf_row9_col1" class="data row9 col1"></td>
-<td id="T_95eaf_row9_col2" class="data row9 col2"></td>
-<td id="T_95eaf_row9_col3" class="data row9 col3"></td>
-<td id="T_95eaf_row9_col4" class="data row9 col4"></td>
-<td id="T_95eaf_row9_col5" class="data row9 col5">100000000</td>
+<td id="T_bc2aa_level0_row9" class="row_heading level0 row9" data-quarto-table-cell-role="th">max_iter</td>
+<td id="T_bc2aa_row9_col0" class="data row9 col0">100000000</td>
+<td id="T_bc2aa_row9_col1" class="data row9 col1"></td>
+<td id="T_bc2aa_row9_col2" class="data row9 col2"></td>
+<td id="T_bc2aa_row9_col3" class="data row9 col3"></td>
+<td id="T_bc2aa_row9_col4" class="data row9 col4"></td>
+<td id="T_bc2aa_row9_col5" class="data row9 col5">100000000</td>
 </tr>
 <tr class="odd">
-<td id="T_95eaf_level0_row10" class="row_heading level0 row10" data-quarto-table-cell-role="th">n_iter_no_change</td>
-<td id="T_95eaf_row10_col0" class="data row10 col0">5</td>
-<td id="T_95eaf_row10_col1" class="data row10 col1"></td>
-<td id="T_95eaf_row10_col2" class="data row10 col2"></td>
-<td id="T_95eaf_row10_col3" class="data row10 col3"></td>
-<td id="T_95eaf_row10_col4" class="data row10 col4"></td>
-<td id="T_95eaf_row10_col5" class="data row10 col5">5</td>
+<td id="T_bc2aa_level0_row10" class="row_heading level0 row10" data-quarto-table-cell-role="th">n_iter_no_change</td>
+<td id="T_bc2aa_row10_col0" class="data row10 col0">5</td>
+<td id="T_bc2aa_row10_col1" class="data row10 col1"></td>
+<td id="T_bc2aa_row10_col2" class="data row10 col2"></td>
+<td id="T_bc2aa_row10_col3" class="data row10 col3"></td>
+<td id="T_bc2aa_row10_col4" class="data row10 col4"></td>
+<td id="T_bc2aa_row10_col5" class="data row10 col5">5</td>
 </tr>
 <tr class="even">
-<td id="T_95eaf_level0_row11" class="row_heading level0 row11" data-quarto-table-cell-role="th">penalty</td>
-<td id="T_95eaf_row11_col0" class="data row11 col0">l2</td>
-<td id="T_95eaf_row11_col1" class="data row11 col1">[None, 'l2', 'l1']</td>
-<td id="T_95eaf_row11_col2" class="data row11 col2">[None, 'l2', 'l1']</td>
-<td id="T_95eaf_row11_col3" class="data row11 col3">['elasticnet']</td>
-<td id="T_95eaf_row11_col4" class="data row11 col4">['elasticnet']</td>
-<td id="T_95eaf_row11_col5" class="data row11 col5">elasticnet</td>
+<td id="T_bc2aa_level0_row11" class="row_heading level0 row11" data-quarto-table-cell-role="th">penalty</td>
+<td id="T_bc2aa_row11_col0" class="data row11 col0">l2</td>
+<td id="T_bc2aa_row11_col1" class="data row11 col1">[None, 'l2', 'l1']</td>
+<td id="T_bc2aa_row11_col2" class="data row11 col2">[None, 'l2', 'l1']</td>
+<td id="T_bc2aa_row11_col3" class="data row11 col3">['elasticnet']</td>
+<td id="T_bc2aa_row11_col4" class="data row11 col4">['elasticnet']</td>
+<td id="T_bc2aa_row11_col5" class="data row11 col5">elasticnet</td>
 </tr>
 <tr class="odd">
-<td id="T_95eaf_level0_row12" class="row_heading level0 row12" data-quarto-table-cell-role="th">power_t</td>
-<td id="T_95eaf_row12_col0" class="data row12 col0">0.250000</td>
-<td id="T_95eaf_row12_col1" class="data row12 col1">[0.1, 0.25, 0.5, 0.7]</td>
-<td id="T_95eaf_row12_col2" class="data row12 col2">[0.1, 0.25, 0.5, 0.7]</td>
-<td id="T_95eaf_row12_col3" class="data row12 col3">[0.1, 0.25, 0.5, 0.7]</td>
-<td id="T_95eaf_row12_col4" class="data row12 col4">[0.1, 0.25, 0.5, 0.7]</td>
-<td id="T_95eaf_row12_col5" class="data row12 col5">0.100000</td>
+<td id="T_bc2aa_level0_row12" class="row_heading level0 row12" data-quarto-table-cell-role="th">power_t</td>
+<td id="T_bc2aa_row12_col0" class="data row12 col0">0.250000</td>
+<td id="T_bc2aa_row12_col1" class="data row12 col1">[0.1, 0.25, 0.5, 0.7]</td>
+<td id="T_bc2aa_row12_col2" class="data row12 col2">[0.1, 0.25, 0.5, 0.7]</td>
+<td id="T_bc2aa_row12_col3" class="data row12 col3">[0.1, 0.25, 0.5, 0.7]</td>
+<td id="T_bc2aa_row12_col4" class="data row12 col4">[0.1, 0.25, 0.5, 0.7]</td>
+<td id="T_bc2aa_row12_col5" class="data row12 col5">0.100000</td>
 </tr>
 <tr class="even">
-<td id="T_95eaf_level0_row13" class="row_heading level0 row13" data-quarto-table-cell-role="th">random_state</td>
-<td id="T_95eaf_row13_col0" class="data row13 col0">42</td>
-<td id="T_95eaf_row13_col1" class="data row13 col1"></td>
-<td id="T_95eaf_row13_col2" class="data row13 col2"></td>
-<td id="T_95eaf_row13_col3" class="data row13 col3"></td>
-<td id="T_95eaf_row13_col4" class="data row13 col4"></td>
-<td id="T_95eaf_row13_col5" class="data row13 col5">42</td>
+<td id="T_bc2aa_level0_row13" class="row_heading level0 row13" data-quarto-table-cell-role="th">random_state</td>
+<td id="T_bc2aa_row13_col0" class="data row13 col0">42</td>
+<td id="T_bc2aa_row13_col1" class="data row13 col1"></td>
+<td id="T_bc2aa_row13_col2" class="data row13 col2"></td>
+<td id="T_bc2aa_row13_col3" class="data row13 col3"></td>
+<td id="T_bc2aa_row13_col4" class="data row13 col4"></td>
+<td id="T_bc2aa_row13_col5" class="data row13 col5">42</td>
 </tr>
 <tr class="odd">
-<td id="T_95eaf_level0_row14" class="row_heading level0 row14" data-quarto-table-cell-role="th">shuffle</td>
-<td id="T_95eaf_row14_col0" class="data row14 col0">True</td>
-<td id="T_95eaf_row14_col1" class="data row14 col1"></td>
-<td id="T_95eaf_row14_col2" class="data row14 col2"></td>
-<td id="T_95eaf_row14_col3" class="data row14 col3"></td>
-<td id="T_95eaf_row14_col4" class="data row14 col4"></td>
-<td id="T_95eaf_row14_col5" class="data row14 col5">True</td>
+<td id="T_bc2aa_level0_row14" class="row_heading level0 row14" data-quarto-table-cell-role="th">shuffle</td>
+<td id="T_bc2aa_row14_col0" class="data row14 col0">True</td>
+<td id="T_bc2aa_row14_col1" class="data row14 col1"></td>
+<td id="T_bc2aa_row14_col2" class="data row14 col2"></td>
+<td id="T_bc2aa_row14_col3" class="data row14 col3"></td>
+<td id="T_bc2aa_row14_col4" class="data row14 col4"></td>
+<td id="T_bc2aa_row14_col5" class="data row14 col5">True</td>
 </tr>
 <tr class="even">
-<td id="T_95eaf_level0_row15" class="row_heading level0 row15" data-quarto-table-cell-role="th">tol</td>
-<td id="T_95eaf_row15_col0" class="data row15 col0">0.001000</td>
-<td id="T_95eaf_row15_col1" class="data row15 col1">[0.0001, 0.001, 0.01, 0.1]</td>
-<td id="T_95eaf_row15_col2" class="data row15 col2">[0.0001, 0.001, 0.01, 0.1]</td>
-<td id="T_95eaf_row15_col3" class="data row15 col3">[0.0001, 0.001, 0.01, 0.1]</td>
-<td id="T_95eaf_row15_col4" class="data row15 col4">[0.0001, 0.001, 0.01, 0.1]</td>
-<td id="T_95eaf_row15_col5" class="data row15 col5">0.001000</td>
+<td id="T_bc2aa_level0_row15" class="row_heading level0 row15" data-quarto-table-cell-role="th">tol</td>
+<td id="T_bc2aa_row15_col0" class="data row15 col0">0.001000</td>
+<td id="T_bc2aa_row15_col1" class="data row15 col1">[0.0001, 0.001, 0.01, 0.1]</td>
+<td id="T_bc2aa_row15_col2" class="data row15 col2">[0.0001, 0.001, 0.01, 0.1]</td>
+<td id="T_bc2aa_row15_col3" class="data row15 col3">[0.0001, 0.001, 0.01, 0.1]</td>
+<td id="T_bc2aa_row15_col4" class="data row15 col4">[0.0001, 0.001, 0.01, 0.1]</td>
+<td id="T_bc2aa_row15_col5" class="data row15 col5">0.001000</td>
 </tr>
 <tr class="odd">
-<td id="T_95eaf_level0_row16" class="row_heading level0 row16" data-quarto-table-cell-role="th">validation_fraction</td>
-<td id="T_95eaf_row16_col0" class="data row16 col0">0.100000</td>
-<td id="T_95eaf_row16_col1" class="data row16 col1"></td>
-<td id="T_95eaf_row16_col2" class="data row16 col2"></td>
-<td id="T_95eaf_row16_col3" class="data row16 col3"></td>
-<td id="T_95eaf_row16_col4" class="data row16 col4"></td>
-<td id="T_95eaf_row16_col5" class="data row16 col5">0.100000</td>
+<td id="T_bc2aa_level0_row16" class="row_heading level0 row16" data-quarto-table-cell-role="th">validation_fraction</td>
+<td id="T_bc2aa_row16_col0" class="data row16 col0">0.100000</td>
+<td id="T_bc2aa_row16_col1" class="data row16 col1"></td>
+<td id="T_bc2aa_row16_col2" class="data row16 col2"></td>
+<td id="T_bc2aa_row16_col3" class="data row16 col3"></td>
+<td id="T_bc2aa_row16_col4" class="data row16 col4"></td>
+<td id="T_bc2aa_row16_col5" class="data row16 col5">0.100000</td>
 </tr>
 <tr class="even">
-<td id="T_95eaf_level0_row17" class="row_heading level0 row17" data-quarto-table-cell-role="th">verbose</td>
-<td id="T_95eaf_row17_col0" class="data row17 col0">0</td>
-<td id="T_95eaf_row17_col1" class="data row17 col1"></td>
-<td id="T_95eaf_row17_col2" class="data row17 col2"></td>
-<td id="T_95eaf_row17_col3" class="data row17 col3"></td>
-<td id="T_95eaf_row17_col4" class="data row17 col4"></td>
-<td id="T_95eaf_row17_col5" class="data row17 col5">0</td>
+<td id="T_bc2aa_level0_row17" class="row_heading level0 row17" data-quarto-table-cell-role="th">verbose</td>
+<td id="T_bc2aa_row17_col0" class="data row17 col0">0</td>
+<td id="T_bc2aa_row17_col1" class="data row17 col1"></td>
+<td id="T_bc2aa_row17_col2" class="data row17 col2"></td>
+<td id="T_bc2aa_row17_col3" class="data row17 col3"></td>
+<td id="T_bc2aa_row17_col4" class="data row17 col4"></td>
+<td id="T_bc2aa_row17_col5" class="data row17 col5">0</td>
 </tr>
 <tr class="odd">
-<td id="T_95eaf_level0_row18" class="row_heading level0 row18" data-quarto-table-cell-role="th">warm_start</td>
-<td id="T_95eaf_row18_col0" class="data row18 col0">False</td>
-<td id="T_95eaf_row18_col1" class="data row18 col1"></td>
-<td id="T_95eaf_row18_col2" class="data row18 col2"></td>
-<td id="T_95eaf_row18_col3" class="data row18 col3"></td>
-<td id="T_95eaf_row18_col4" class="data row18 col4"></td>
-<td id="T_95eaf_row18_col5" class="data row18 col5">False</td>
+<td id="T_bc2aa_level0_row18" class="row_heading level0 row18" data-quarto-table-cell-role="th">warm_start</td>
+<td id="T_bc2aa_row18_col0" class="data row18 col0">False</td>
+<td id="T_bc2aa_row18_col1" class="data row18 col1"></td>
+<td id="T_bc2aa_row18_col2" class="data row18 col2"></td>
+<td id="T_bc2aa_row18_col3" class="data row18 col3"></td>
+<td id="T_bc2aa_row18_col4" class="data row18 col4"></td>
+<td id="T_bc2aa_row18_col5" class="data row18 col5">False</td>
 </tr>
 </tbody>
 </table>
@@ -2802,45 +2802,45 @@ standard parameters are:
 <style type="text/css">
 </style>
 
-<div id="T_5a3b0" class="quarto-float quarto-figure quarto-figure-center anchored" data-quarto-postprocess="true">
+<div id="T_0e506" class="quarto-float quarto-figure quarto-figure-center anchored" data-quarto-postprocess="true">
 <figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="T_5a3b0-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="T_0e506-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Table&nbsp;6: Multivariable Linear Regression
 </figcaption>
-<div aria-describedby="T_5a3b0-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<table id="T_5a3b0" class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<div aria-describedby="T_0e506-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table id="T_0e506" class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
 <thead>
 <tr class="header">
 <th class="blank level0" data-quarto-table-cell-role="th">&nbsp;</th>
-<th id="T_5a3b0_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">default_params</th>
-<th id="T_5a3b0_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">hyperparameters0</th>
-<th id="T_5a3b0_level0_col2" class="col_heading level0 col2" data-quarto-table-cell-role="th">best_parameters</th>
+<th id="T_0e506_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">default_params</th>
+<th id="T_0e506_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">hyperparameters0</th>
+<th id="T_0e506_level0_col2" class="col_heading level0 col2" data-quarto-table-cell-role="th">best_parameters</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td id="T_5a3b0_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">copy_X</td>
-<td id="T_5a3b0_row0_col0" class="data row0 col0">True</td>
-<td id="T_5a3b0_row0_col1" class="data row0 col1">[False, True]</td>
-<td id="T_5a3b0_row0_col2" class="data row0 col2">False</td>
+<td id="T_0e506_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">copy_X</td>
+<td id="T_0e506_row0_col0" class="data row0 col0">True</td>
+<td id="T_0e506_row0_col1" class="data row0 col1">[False, True]</td>
+<td id="T_0e506_row0_col2" class="data row0 col2">False</td>
 </tr>
 <tr class="even">
-<td id="T_5a3b0_level0_row1" class="row_heading level0 row1" data-quarto-table-cell-role="th">fit_intercept</td>
-<td id="T_5a3b0_row1_col0" class="data row1 col0">True</td>
-<td id="T_5a3b0_row1_col1" class="data row1 col1">[False, True]</td>
-<td id="T_5a3b0_row1_col2" class="data row1 col2">True</td>
+<td id="T_0e506_level0_row1" class="row_heading level0 row1" data-quarto-table-cell-role="th">fit_intercept</td>
+<td id="T_0e506_row1_col0" class="data row1 col0">True</td>
+<td id="T_0e506_row1_col1" class="data row1 col1">[False, True]</td>
+<td id="T_0e506_row1_col2" class="data row1 col2">True</td>
 </tr>
 <tr class="odd">
-<td id="T_5a3b0_level0_row2" class="row_heading level0 row2" data-quarto-table-cell-role="th">n_jobs</td>
-<td id="T_5a3b0_row2_col0" class="data row2 col0"></td>
-<td id="T_5a3b0_row2_col1" class="data row2 col1"></td>
-<td id="T_5a3b0_row2_col2" class="data row2 col2">None</td>
+<td id="T_0e506_level0_row2" class="row_heading level0 row2" data-quarto-table-cell-role="th">n_jobs</td>
+<td id="T_0e506_row2_col0" class="data row2 col0"></td>
+<td id="T_0e506_row2_col1" class="data row2 col1"></td>
+<td id="T_0e506_row2_col2" class="data row2 col2">None</td>
 </tr>
 <tr class="even">
-<td id="T_5a3b0_level0_row3" class="row_heading level0 row3" data-quarto-table-cell-role="th">positive</td>
-<td id="T_5a3b0_row3_col0" class="data row3 col0">False</td>
-<td id="T_5a3b0_row3_col1" class="data row3 col1">[False, True]</td>
-<td id="T_5a3b0_row3_col2" class="data row3 col2">True</td>
+<td id="T_0e506_level0_row3" class="row_heading level0 row3" data-quarto-table-cell-role="th">positive</td>
+<td id="T_0e506_row3_col0" class="data row3 col0">False</td>
+<td id="T_0e506_row3_col1" class="data row3 col1">[False, True]</td>
+<td id="T_0e506_row3_col2" class="data row3 col2">True</td>
 </tr>
 </tbody>
 </table>
@@ -2854,8 +2854,8 @@ Tuned param 'activation' changed from relu to tanh.
 Tuned param 'batch_size' changed from auto to 128.
 Tuned param 'early_stopping' changed from False to True.
 Tuned param 'hidden_layer_sizes' changed from (100,) to (256, 128).
-Tuned param 'learning_rate' changed from constant to adaptive.
-Tuned param 'max_iter' changed from 200 to 500.
+Tuned param 'learning_rate' changed from constant to invscaling.
+Tuned param 'max_iter' changed from 200 to 350.
 Tuned param 'power_t' changed from 0.5 to 0.7.
 Tuned param 'tol' changed from 0.0001 to 0.001.
 Best parameters are:
@@ -2867,10 +2867,10 @@ Best parameters are:
     'early_stopping': True,
     'epsilon': 1e-08,
     'hidden_layer_sizes': (256, 128),
-    'learning_rate': 'adaptive',
+    'learning_rate': 'invscaling',
     'learning_rate_init': 0.001,
     'max_fun': 15000,
-    'max_iter': 500,
+    'max_iter': 350,
     'momentum': 0.9,
     'n_iter_no_change': 10,
     'nesterovs_momentum': True,
@@ -2911,231 +2911,231 @@ standard parameters are:
 <style type="text/css">
 </style>
 
-<div id="T_0e7a6" class="quarto-float quarto-figure quarto-figure-center anchored" data-quarto-postprocess="true">
+<div id="T_cbe40" class="quarto-float quarto-figure quarto-figure-center anchored" data-quarto-postprocess="true">
 <figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="T_0e7a6-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="T_cbe40-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Table&nbsp;7: Multi-layer Perceptron
 </figcaption>
-<div aria-describedby="T_0e7a6-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<table id="T_0e7a6" class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<div aria-describedby="T_cbe40-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table id="T_cbe40" class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
 <thead>
 <tr class="header">
 <th class="blank level0" data-quarto-table-cell-role="th">&nbsp;</th>
-<th id="T_0e7a6_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">default_params</th>
-<th id="T_0e7a6_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">hyperparameters0</th>
-<th id="T_0e7a6_level0_col2" class="col_heading level0 col2" data-quarto-table-cell-role="th">hyperparameters1</th>
-<th id="T_0e7a6_level0_col3" class="col_heading level0 col3" data-quarto-table-cell-role="th">hyperparameters2</th>
-<th id="T_0e7a6_level0_col4" class="col_heading level0 col4" data-quarto-table-cell-role="th">hyperparameters3</th>
-<th id="T_0e7a6_level0_col5" class="col_heading level0 col5" data-quarto-table-cell-role="th">best_parameters</th>
+<th id="T_cbe40_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">default_params</th>
+<th id="T_cbe40_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">hyperparameters0</th>
+<th id="T_cbe40_level0_col2" class="col_heading level0 col2" data-quarto-table-cell-role="th">hyperparameters1</th>
+<th id="T_cbe40_level0_col3" class="col_heading level0 col3" data-quarto-table-cell-role="th">hyperparameters2</th>
+<th id="T_cbe40_level0_col4" class="col_heading level0 col4" data-quarto-table-cell-role="th">hyperparameters3</th>
+<th id="T_cbe40_level0_col5" class="col_heading level0 col5" data-quarto-table-cell-role="th">best_parameters</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td id="T_0e7a6_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">activation</td>
-<td id="T_0e7a6_row0_col0" class="data row0 col0">relu</td>
-<td id="T_0e7a6_row0_col1" class="data row0 col1">['relu', 'tanh', 'logistic']</td>
-<td id="T_0e7a6_row0_col2" class="data row0 col2">['relu', 'tanh', 'logistic']</td>
-<td id="T_0e7a6_row0_col3" class="data row0 col3">['relu', 'tanh', 'logistic']</td>
-<td id="T_0e7a6_row0_col4" class="data row0 col4">['relu', 'tanh', 'logistic']</td>
-<td id="T_0e7a6_row0_col5" class="data row0 col5">tanh</td>
+<td id="T_cbe40_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">activation</td>
+<td id="T_cbe40_row0_col0" class="data row0 col0">relu</td>
+<td id="T_cbe40_row0_col1" class="data row0 col1">['relu', 'tanh', 'logistic']</td>
+<td id="T_cbe40_row0_col2" class="data row0 col2">['relu', 'tanh', 'logistic']</td>
+<td id="T_cbe40_row0_col3" class="data row0 col3">['relu', 'tanh', 'logistic']</td>
+<td id="T_cbe40_row0_col4" class="data row0 col4">['relu', 'tanh', 'logistic']</td>
+<td id="T_cbe40_row0_col5" class="data row0 col5">tanh</td>
 </tr>
 <tr class="even">
-<td id="T_0e7a6_level0_row1" class="row_heading level0 row1" data-quarto-table-cell-role="th">alpha</td>
-<td id="T_0e7a6_row1_col0" class="data row1 col0">0.000100</td>
-<td id="T_0e7a6_row1_col1" class="data row1 col1">[0.0001, 0.001]</td>
-<td id="T_0e7a6_row1_col2" class="data row1 col2">[0.0001, 0.001]</td>
-<td id="T_0e7a6_row1_col3" class="data row1 col3">[0.0001, 0.001]</td>
-<td id="T_0e7a6_row1_col4" class="data row1 col4">[0.0001, 0.001]</td>
-<td id="T_0e7a6_row1_col5" class="data row1 col5">0.000100</td>
+<td id="T_cbe40_level0_row1" class="row_heading level0 row1" data-quarto-table-cell-role="th">alpha</td>
+<td id="T_cbe40_row1_col0" class="data row1 col0">0.000100</td>
+<td id="T_cbe40_row1_col1" class="data row1 col1">[0.0001, 0.001]</td>
+<td id="T_cbe40_row1_col2" class="data row1 col2">[0.0001, 0.001]</td>
+<td id="T_cbe40_row1_col3" class="data row1 col3">[0.0001, 0.001]</td>
+<td id="T_cbe40_row1_col4" class="data row1 col4">[0.0001, 0.001]</td>
+<td id="T_cbe40_row1_col5" class="data row1 col5">0.000100</td>
 </tr>
 <tr class="odd">
-<td id="T_0e7a6_level0_row2" class="row_heading level0 row2" data-quarto-table-cell-role="th">batch_size</td>
-<td id="T_0e7a6_row2_col0" class="data row2 col0">auto</td>
-<td id="T_0e7a6_row2_col1" class="data row2 col1">['auto', 64, 128]</td>
-<td id="T_0e7a6_row2_col2" class="data row2 col2">['auto', 64, 128]</td>
-<td id="T_0e7a6_row2_col3" class="data row2 col3">['auto', 64, 128]</td>
-<td id="T_0e7a6_row2_col4" class="data row2 col4">['auto', 64, 128]</td>
-<td id="T_0e7a6_row2_col5" class="data row2 col5">128</td>
+<td id="T_cbe40_level0_row2" class="row_heading level0 row2" data-quarto-table-cell-role="th">batch_size</td>
+<td id="T_cbe40_row2_col0" class="data row2 col0">auto</td>
+<td id="T_cbe40_row2_col1" class="data row2 col1">['auto', 64, 128]</td>
+<td id="T_cbe40_row2_col2" class="data row2 col2">['auto', 64, 128]</td>
+<td id="T_cbe40_row2_col3" class="data row2 col3">['auto', 64, 128]</td>
+<td id="T_cbe40_row2_col4" class="data row2 col4">['auto', 64, 128]</td>
+<td id="T_cbe40_row2_col5" class="data row2 col5">128</td>
 </tr>
 <tr class="even">
-<td id="T_0e7a6_level0_row3" class="row_heading level0 row3" data-quarto-table-cell-role="th">beta_1</td>
-<td id="T_0e7a6_row3_col0" class="data row3 col0">0.900000</td>
-<td id="T_0e7a6_row3_col1" class="data row3 col1"></td>
-<td id="T_0e7a6_row3_col2" class="data row3 col2"></td>
-<td id="T_0e7a6_row3_col3" class="data row3 col3"></td>
-<td id="T_0e7a6_row3_col4" class="data row3 col4"></td>
-<td id="T_0e7a6_row3_col5" class="data row3 col5">0.900000</td>
+<td id="T_cbe40_level0_row3" class="row_heading level0 row3" data-quarto-table-cell-role="th">beta_1</td>
+<td id="T_cbe40_row3_col0" class="data row3 col0">0.900000</td>
+<td id="T_cbe40_row3_col1" class="data row3 col1"></td>
+<td id="T_cbe40_row3_col2" class="data row3 col2"></td>
+<td id="T_cbe40_row3_col3" class="data row3 col3"></td>
+<td id="T_cbe40_row3_col4" class="data row3 col4"></td>
+<td id="T_cbe40_row3_col5" class="data row3 col5">0.900000</td>
 </tr>
 <tr class="odd">
-<td id="T_0e7a6_level0_row4" class="row_heading level0 row4" data-quarto-table-cell-role="th">beta_2</td>
-<td id="T_0e7a6_row4_col0" class="data row4 col0">0.999000</td>
-<td id="T_0e7a6_row4_col1" class="data row4 col1"></td>
-<td id="T_0e7a6_row4_col2" class="data row4 col2"></td>
-<td id="T_0e7a6_row4_col3" class="data row4 col3"></td>
-<td id="T_0e7a6_row4_col4" class="data row4 col4"></td>
-<td id="T_0e7a6_row4_col5" class="data row4 col5">0.999000</td>
+<td id="T_cbe40_level0_row4" class="row_heading level0 row4" data-quarto-table-cell-role="th">beta_2</td>
+<td id="T_cbe40_row4_col0" class="data row4 col0">0.999000</td>
+<td id="T_cbe40_row4_col1" class="data row4 col1"></td>
+<td id="T_cbe40_row4_col2" class="data row4 col2"></td>
+<td id="T_cbe40_row4_col3" class="data row4 col3"></td>
+<td id="T_cbe40_row4_col4" class="data row4 col4"></td>
+<td id="T_cbe40_row4_col5" class="data row4 col5">0.999000</td>
 </tr>
 <tr class="even">
-<td id="T_0e7a6_level0_row5" class="row_heading level0 row5" data-quarto-table-cell-role="th">early_stopping</td>
-<td id="T_0e7a6_row5_col0" class="data row5 col0">False</td>
-<td id="T_0e7a6_row5_col1" class="data row5 col1">[True]</td>
-<td id="T_0e7a6_row5_col2" class="data row5 col2">[True]</td>
-<td id="T_0e7a6_row5_col3" class="data row5 col3">[True]</td>
-<td id="T_0e7a6_row5_col4" class="data row5 col4">[True]</td>
-<td id="T_0e7a6_row5_col5" class="data row5 col5">True</td>
+<td id="T_cbe40_level0_row5" class="row_heading level0 row5" data-quarto-table-cell-role="th">early_stopping</td>
+<td id="T_cbe40_row5_col0" class="data row5 col0">False</td>
+<td id="T_cbe40_row5_col1" class="data row5 col1">[True]</td>
+<td id="T_cbe40_row5_col2" class="data row5 col2">[True]</td>
+<td id="T_cbe40_row5_col3" class="data row5 col3">[True]</td>
+<td id="T_cbe40_row5_col4" class="data row5 col4">[True]</td>
+<td id="T_cbe40_row5_col5" class="data row5 col5">True</td>
 </tr>
 <tr class="odd">
-<td id="T_0e7a6_level0_row6" class="row_heading level0 row6" data-quarto-table-cell-role="th">epsilon</td>
-<td id="T_0e7a6_row6_col0" class="data row6 col0">0.000000</td>
-<td id="T_0e7a6_row6_col1" class="data row6 col1"></td>
-<td id="T_0e7a6_row6_col2" class="data row6 col2"></td>
-<td id="T_0e7a6_row6_col3" class="data row6 col3"></td>
-<td id="T_0e7a6_row6_col4" class="data row6 col4"></td>
-<td id="T_0e7a6_row6_col5" class="data row6 col5">0.000000</td>
+<td id="T_cbe40_level0_row6" class="row_heading level0 row6" data-quarto-table-cell-role="th">epsilon</td>
+<td id="T_cbe40_row6_col0" class="data row6 col0">0.000000</td>
+<td id="T_cbe40_row6_col1" class="data row6 col1"></td>
+<td id="T_cbe40_row6_col2" class="data row6 col2"></td>
+<td id="T_cbe40_row6_col3" class="data row6 col3"></td>
+<td id="T_cbe40_row6_col4" class="data row6 col4"></td>
+<td id="T_cbe40_row6_col5" class="data row6 col5">0.000000</td>
 </tr>
 <tr class="even">
-<td id="T_0e7a6_level0_row7" class="row_heading level0 row7" data-quarto-table-cell-role="th">hidden_layer_sizes</td>
-<td id="T_0e7a6_row7_col0" class="data row7 col0">(100,)</td>
-<td id="T_0e7a6_row7_col1" class="data row7 col1">[(100,), (256, 128), (64,), (256, 128, 64), (64, 32)]</td>
-<td id="T_0e7a6_row7_col2" class="data row7 col2">[(100,), (256, 128), (64,), (256, 128, 64), (64, 32)]</td>
-<td id="T_0e7a6_row7_col3" class="data row7 col3">[(100,), (256, 128), (64,), (256, 128, 64), (64, 32)]</td>
-<td id="T_0e7a6_row7_col4" class="data row7 col4">[(100,), (256, 128), (64,), (256, 128, 64), (64, 32)]</td>
-<td id="T_0e7a6_row7_col5" class="data row7 col5">(256, 128)</td>
+<td id="T_cbe40_level0_row7" class="row_heading level0 row7" data-quarto-table-cell-role="th">hidden_layer_sizes</td>
+<td id="T_cbe40_row7_col0" class="data row7 col0">(100,)</td>
+<td id="T_cbe40_row7_col1" class="data row7 col1">[(100,), (256, 128), (64,), (256, 128, 64), (64, 32)]</td>
+<td id="T_cbe40_row7_col2" class="data row7 col2">[(100,), (256, 128), (64,), (256, 128, 64), (64, 32)]</td>
+<td id="T_cbe40_row7_col3" class="data row7 col3">[(100,), (256, 128), (64,), (256, 128, 64), (64, 32)]</td>
+<td id="T_cbe40_row7_col4" class="data row7 col4">[(100,), (256, 128), (64,), (256, 128, 64), (64, 32)]</td>
+<td id="T_cbe40_row7_col5" class="data row7 col5">(256, 128)</td>
 </tr>
 <tr class="odd">
-<td id="T_0e7a6_level0_row8" class="row_heading level0 row8" data-quarto-table-cell-role="th">learning_rate</td>
-<td id="T_0e7a6_row8_col0" class="data row8 col0">constant</td>
-<td id="T_0e7a6_row8_col1" class="data row8 col1">['constant', 'invscaling', 'adaptive']</td>
-<td id="T_0e7a6_row8_col2" class="data row8 col2">['constant', 'invscaling', 'adaptive']</td>
-<td id="T_0e7a6_row8_col3" class="data row8 col3"></td>
-<td id="T_0e7a6_row8_col4" class="data row8 col4"></td>
-<td id="T_0e7a6_row8_col5" class="data row8 col5">adaptive</td>
+<td id="T_cbe40_level0_row8" class="row_heading level0 row8" data-quarto-table-cell-role="th">learning_rate</td>
+<td id="T_cbe40_row8_col0" class="data row8 col0">constant</td>
+<td id="T_cbe40_row8_col1" class="data row8 col1">['constant', 'invscaling', 'adaptive']</td>
+<td id="T_cbe40_row8_col2" class="data row8 col2">['constant', 'invscaling', 'adaptive']</td>
+<td id="T_cbe40_row8_col3" class="data row8 col3"></td>
+<td id="T_cbe40_row8_col4" class="data row8 col4"></td>
+<td id="T_cbe40_row8_col5" class="data row8 col5">invscaling</td>
 </tr>
 <tr class="even">
-<td id="T_0e7a6_level0_row9" class="row_heading level0 row9" data-quarto-table-cell-role="th">learning_rate_init</td>
-<td id="T_0e7a6_row9_col0" class="data row9 col0">0.001000</td>
-<td id="T_0e7a6_row9_col1" class="data row9 col1">[0.001, 0.0001]</td>
-<td id="T_0e7a6_row9_col2" class="data row9 col2">[0.001, 0.0001]</td>
-<td id="T_0e7a6_row9_col3" class="data row9 col3">[0.001, 0.0001]</td>
-<td id="T_0e7a6_row9_col4" class="data row9 col4">[0.001, 0.0001]</td>
-<td id="T_0e7a6_row9_col5" class="data row9 col5">0.001000</td>
+<td id="T_cbe40_level0_row9" class="row_heading level0 row9" data-quarto-table-cell-role="th">learning_rate_init</td>
+<td id="T_cbe40_row9_col0" class="data row9 col0">0.001000</td>
+<td id="T_cbe40_row9_col1" class="data row9 col1">[0.001, 0.0001]</td>
+<td id="T_cbe40_row9_col2" class="data row9 col2">[0.001, 0.0001]</td>
+<td id="T_cbe40_row9_col3" class="data row9 col3">[0.001, 0.0001]</td>
+<td id="T_cbe40_row9_col4" class="data row9 col4">[0.001, 0.0001]</td>
+<td id="T_cbe40_row9_col5" class="data row9 col5">0.001000</td>
 </tr>
 <tr class="odd">
-<td id="T_0e7a6_level0_row10" class="row_heading level0 row10" data-quarto-table-cell-role="th">max_fun</td>
-<td id="T_0e7a6_row10_col0" class="data row10 col0">15000</td>
-<td id="T_0e7a6_row10_col1" class="data row10 col1"></td>
-<td id="T_0e7a6_row10_col2" class="data row10 col2"></td>
-<td id="T_0e7a6_row10_col3" class="data row10 col3"></td>
-<td id="T_0e7a6_row10_col4" class="data row10 col4"></td>
-<td id="T_0e7a6_row10_col5" class="data row10 col5">15000</td>
+<td id="T_cbe40_level0_row10" class="row_heading level0 row10" data-quarto-table-cell-role="th">max_fun</td>
+<td id="T_cbe40_row10_col0" class="data row10 col0">15000</td>
+<td id="T_cbe40_row10_col1" class="data row10 col1"></td>
+<td id="T_cbe40_row10_col2" class="data row10 col2"></td>
+<td id="T_cbe40_row10_col3" class="data row10 col3"></td>
+<td id="T_cbe40_row10_col4" class="data row10 col4"></td>
+<td id="T_cbe40_row10_col5" class="data row10 col5">15000</td>
 </tr>
 <tr class="even">
-<td id="T_0e7a6_level0_row11" class="row_heading level0 row11" data-quarto-table-cell-role="th">max_iter</td>
-<td id="T_0e7a6_row11_col0" class="data row11 col0">200</td>
-<td id="T_0e7a6_row11_col1" class="data row11 col1">[350]</td>
-<td id="T_0e7a6_row11_col2" class="data row11 col2">[500]</td>
-<td id="T_0e7a6_row11_col3" class="data row11 col3">[200, 350, 500]</td>
-<td id="T_0e7a6_row11_col4" class="data row11 col4">[200, 350, 500]</td>
-<td id="T_0e7a6_row11_col5" class="data row11 col5">500</td>
+<td id="T_cbe40_level0_row11" class="row_heading level0 row11" data-quarto-table-cell-role="th">max_iter</td>
+<td id="T_cbe40_row11_col0" class="data row11 col0">200</td>
+<td id="T_cbe40_row11_col1" class="data row11 col1">[350]</td>
+<td id="T_cbe40_row11_col2" class="data row11 col2">[500]</td>
+<td id="T_cbe40_row11_col3" class="data row11 col3">[200, 350, 500]</td>
+<td id="T_cbe40_row11_col4" class="data row11 col4">[200, 350, 500]</td>
+<td id="T_cbe40_row11_col5" class="data row11 col5">350</td>
 </tr>
 <tr class="odd">
-<td id="T_0e7a6_level0_row12" class="row_heading level0 row12" data-quarto-table-cell-role="th">momentum</td>
-<td id="T_0e7a6_row12_col0" class="data row12 col0">0.900000</td>
-<td id="T_0e7a6_row12_col1" class="data row12 col1">[0.5, 0.7, 0.9]</td>
-<td id="T_0e7a6_row12_col2" class="data row12 col2">[0.5, 0.7, 0.9]</td>
-<td id="T_0e7a6_row12_col3" class="data row12 col3"></td>
-<td id="T_0e7a6_row12_col4" class="data row12 col4"></td>
-<td id="T_0e7a6_row12_col5" class="data row12 col5">0.900000</td>
+<td id="T_cbe40_level0_row12" class="row_heading level0 row12" data-quarto-table-cell-role="th">momentum</td>
+<td id="T_cbe40_row12_col0" class="data row12 col0">0.900000</td>
+<td id="T_cbe40_row12_col1" class="data row12 col1">[0.5, 0.7, 0.9]</td>
+<td id="T_cbe40_row12_col2" class="data row12 col2">[0.5, 0.7, 0.9]</td>
+<td id="T_cbe40_row12_col3" class="data row12 col3"></td>
+<td id="T_cbe40_row12_col4" class="data row12 col4"></td>
+<td id="T_cbe40_row12_col5" class="data row12 col5">0.900000</td>
 </tr>
 <tr class="even">
-<td id="T_0e7a6_level0_row13" class="row_heading level0 row13" data-quarto-table-cell-role="th">n_iter_no_change</td>
-<td id="T_0e7a6_row13_col0" class="data row13 col0">10</td>
-<td id="T_0e7a6_row13_col1" class="data row13 col1"></td>
-<td id="T_0e7a6_row13_col2" class="data row13 col2"></td>
-<td id="T_0e7a6_row13_col3" class="data row13 col3"></td>
-<td id="T_0e7a6_row13_col4" class="data row13 col4"></td>
-<td id="T_0e7a6_row13_col5" class="data row13 col5">10</td>
+<td id="T_cbe40_level0_row13" class="row_heading level0 row13" data-quarto-table-cell-role="th">n_iter_no_change</td>
+<td id="T_cbe40_row13_col0" class="data row13 col0">10</td>
+<td id="T_cbe40_row13_col1" class="data row13 col1"></td>
+<td id="T_cbe40_row13_col2" class="data row13 col2"></td>
+<td id="T_cbe40_row13_col3" class="data row13 col3"></td>
+<td id="T_cbe40_row13_col4" class="data row13 col4"></td>
+<td id="T_cbe40_row13_col5" class="data row13 col5">10</td>
 </tr>
 <tr class="odd">
-<td id="T_0e7a6_level0_row14" class="row_heading level0 row14" data-quarto-table-cell-role="th">nesterovs_momentum</td>
-<td id="T_0e7a6_row14_col0" class="data row14 col0">True</td>
-<td id="T_0e7a6_row14_col1" class="data row14 col1"></td>
-<td id="T_0e7a6_row14_col2" class="data row14 col2"></td>
-<td id="T_0e7a6_row14_col3" class="data row14 col3"></td>
-<td id="T_0e7a6_row14_col4" class="data row14 col4"></td>
-<td id="T_0e7a6_row14_col5" class="data row14 col5">True</td>
+<td id="T_cbe40_level0_row14" class="row_heading level0 row14" data-quarto-table-cell-role="th">nesterovs_momentum</td>
+<td id="T_cbe40_row14_col0" class="data row14 col0">True</td>
+<td id="T_cbe40_row14_col1" class="data row14 col1"></td>
+<td id="T_cbe40_row14_col2" class="data row14 col2"></td>
+<td id="T_cbe40_row14_col3" class="data row14 col3"></td>
+<td id="T_cbe40_row14_col4" class="data row14 col4"></td>
+<td id="T_cbe40_row14_col5" class="data row14 col5">True</td>
 </tr>
 <tr class="even">
-<td id="T_0e7a6_level0_row15" class="row_heading level0 row15" data-quarto-table-cell-role="th">power_t</td>
-<td id="T_0e7a6_row15_col0" class="data row15 col0">0.500000</td>
-<td id="T_0e7a6_row15_col1" class="data row15 col1">[0.3, 0.5, 0.7]</td>
-<td id="T_0e7a6_row15_col2" class="data row15 col2">[0.3, 0.5, 0.7]</td>
-<td id="T_0e7a6_row15_col3" class="data row15 col3"></td>
-<td id="T_0e7a6_row15_col4" class="data row15 col4"></td>
-<td id="T_0e7a6_row15_col5" class="data row15 col5">0.700000</td>
+<td id="T_cbe40_level0_row15" class="row_heading level0 row15" data-quarto-table-cell-role="th">power_t</td>
+<td id="T_cbe40_row15_col0" class="data row15 col0">0.500000</td>
+<td id="T_cbe40_row15_col1" class="data row15 col1">[0.3, 0.5, 0.7]</td>
+<td id="T_cbe40_row15_col2" class="data row15 col2">[0.3, 0.5, 0.7]</td>
+<td id="T_cbe40_row15_col3" class="data row15 col3"></td>
+<td id="T_cbe40_row15_col4" class="data row15 col4"></td>
+<td id="T_cbe40_row15_col5" class="data row15 col5">0.700000</td>
 </tr>
 <tr class="odd">
-<td id="T_0e7a6_level0_row16" class="row_heading level0 row16" data-quarto-table-cell-role="th">random_state</td>
-<td id="T_0e7a6_row16_col0" class="data row16 col0">42</td>
-<td id="T_0e7a6_row16_col1" class="data row16 col1"></td>
-<td id="T_0e7a6_row16_col2" class="data row16 col2"></td>
-<td id="T_0e7a6_row16_col3" class="data row16 col3"></td>
-<td id="T_0e7a6_row16_col4" class="data row16 col4"></td>
-<td id="T_0e7a6_row16_col5" class="data row16 col5">42</td>
+<td id="T_cbe40_level0_row16" class="row_heading level0 row16" data-quarto-table-cell-role="th">random_state</td>
+<td id="T_cbe40_row16_col0" class="data row16 col0">42</td>
+<td id="T_cbe40_row16_col1" class="data row16 col1"></td>
+<td id="T_cbe40_row16_col2" class="data row16 col2"></td>
+<td id="T_cbe40_row16_col3" class="data row16 col3"></td>
+<td id="T_cbe40_row16_col4" class="data row16 col4"></td>
+<td id="T_cbe40_row16_col5" class="data row16 col5">42</td>
 </tr>
 <tr class="even">
-<td id="T_0e7a6_level0_row17" class="row_heading level0 row17" data-quarto-table-cell-role="th">shuffle</td>
-<td id="T_0e7a6_row17_col0" class="data row17 col0">True</td>
-<td id="T_0e7a6_row17_col1" class="data row17 col1"></td>
-<td id="T_0e7a6_row17_col2" class="data row17 col2"></td>
-<td id="T_0e7a6_row17_col3" class="data row17 col3"></td>
-<td id="T_0e7a6_row17_col4" class="data row17 col4"></td>
-<td id="T_0e7a6_row17_col5" class="data row17 col5">True</td>
+<td id="T_cbe40_level0_row17" class="row_heading level0 row17" data-quarto-table-cell-role="th">shuffle</td>
+<td id="T_cbe40_row17_col0" class="data row17 col0">True</td>
+<td id="T_cbe40_row17_col1" class="data row17 col1"></td>
+<td id="T_cbe40_row17_col2" class="data row17 col2"></td>
+<td id="T_cbe40_row17_col3" class="data row17 col3"></td>
+<td id="T_cbe40_row17_col4" class="data row17 col4"></td>
+<td id="T_cbe40_row17_col5" class="data row17 col5">True</td>
 </tr>
 <tr class="odd">
-<td id="T_0e7a6_level0_row18" class="row_heading level0 row18" data-quarto-table-cell-role="th">solver</td>
-<td id="T_0e7a6_row18_col0" class="data row18 col0">adam</td>
-<td id="T_0e7a6_row18_col1" class="data row18 col1">['sgd']</td>
-<td id="T_0e7a6_row18_col2" class="data row18 col2">['sgd']</td>
-<td id="T_0e7a6_row18_col3" class="data row18 col3">['adam']</td>
-<td id="T_0e7a6_row18_col4" class="data row18 col4">['lbfgs']</td>
-<td id="T_0e7a6_row18_col5" class="data row18 col5">adam</td>
+<td id="T_cbe40_level0_row18" class="row_heading level0 row18" data-quarto-table-cell-role="th">solver</td>
+<td id="T_cbe40_row18_col0" class="data row18 col0">adam</td>
+<td id="T_cbe40_row18_col1" class="data row18 col1">['sgd']</td>
+<td id="T_cbe40_row18_col2" class="data row18 col2">['sgd']</td>
+<td id="T_cbe40_row18_col3" class="data row18 col3">['adam']</td>
+<td id="T_cbe40_row18_col4" class="data row18 col4">['lbfgs']</td>
+<td id="T_cbe40_row18_col5" class="data row18 col5">adam</td>
 </tr>
 <tr class="even">
-<td id="T_0e7a6_level0_row19" class="row_heading level0 row19" data-quarto-table-cell-role="th">tol</td>
-<td id="T_0e7a6_row19_col0" class="data row19 col0">0.000100</td>
-<td id="T_0e7a6_row19_col1" class="data row19 col1">[0.0001, 0.001]</td>
-<td id="T_0e7a6_row19_col2" class="data row19 col2">[0.0001, 0.001]</td>
-<td id="T_0e7a6_row19_col3" class="data row19 col3">[0.0001, 0.001]</td>
-<td id="T_0e7a6_row19_col4" class="data row19 col4">[0.0001, 0.001]</td>
-<td id="T_0e7a6_row19_col5" class="data row19 col5">0.001000</td>
+<td id="T_cbe40_level0_row19" class="row_heading level0 row19" data-quarto-table-cell-role="th">tol</td>
+<td id="T_cbe40_row19_col0" class="data row19 col0">0.000100</td>
+<td id="T_cbe40_row19_col1" class="data row19 col1">[0.0001, 0.001]</td>
+<td id="T_cbe40_row19_col2" class="data row19 col2">[0.0001, 0.001]</td>
+<td id="T_cbe40_row19_col3" class="data row19 col3">[0.0001, 0.001]</td>
+<td id="T_cbe40_row19_col4" class="data row19 col4">[0.0001, 0.001]</td>
+<td id="T_cbe40_row19_col5" class="data row19 col5">0.001000</td>
 </tr>
 <tr class="odd">
-<td id="T_0e7a6_level0_row20" class="row_heading level0 row20" data-quarto-table-cell-role="th">validation_fraction</td>
-<td id="T_0e7a6_row20_col0" class="data row20 col0">0.100000</td>
-<td id="T_0e7a6_row20_col1" class="data row20 col1"></td>
-<td id="T_0e7a6_row20_col2" class="data row20 col2"></td>
-<td id="T_0e7a6_row20_col3" class="data row20 col3"></td>
-<td id="T_0e7a6_row20_col4" class="data row20 col4"></td>
-<td id="T_0e7a6_row20_col5" class="data row20 col5">0.100000</td>
+<td id="T_cbe40_level0_row20" class="row_heading level0 row20" data-quarto-table-cell-role="th">validation_fraction</td>
+<td id="T_cbe40_row20_col0" class="data row20 col0">0.100000</td>
+<td id="T_cbe40_row20_col1" class="data row20 col1"></td>
+<td id="T_cbe40_row20_col2" class="data row20 col2"></td>
+<td id="T_cbe40_row20_col3" class="data row20 col3"></td>
+<td id="T_cbe40_row20_col4" class="data row20 col4"></td>
+<td id="T_cbe40_row20_col5" class="data row20 col5">0.100000</td>
 </tr>
 <tr class="even">
-<td id="T_0e7a6_level0_row21" class="row_heading level0 row21" data-quarto-table-cell-role="th">verbose</td>
-<td id="T_0e7a6_row21_col0" class="data row21 col0">False</td>
-<td id="T_0e7a6_row21_col1" class="data row21 col1"></td>
-<td id="T_0e7a6_row21_col2" class="data row21 col2"></td>
-<td id="T_0e7a6_row21_col3" class="data row21 col3"></td>
-<td id="T_0e7a6_row21_col4" class="data row21 col4"></td>
-<td id="T_0e7a6_row21_col5" class="data row21 col5">False</td>
+<td id="T_cbe40_level0_row21" class="row_heading level0 row21" data-quarto-table-cell-role="th">verbose</td>
+<td id="T_cbe40_row21_col0" class="data row21 col0">False</td>
+<td id="T_cbe40_row21_col1" class="data row21 col1"></td>
+<td id="T_cbe40_row21_col2" class="data row21 col2"></td>
+<td id="T_cbe40_row21_col3" class="data row21 col3"></td>
+<td id="T_cbe40_row21_col4" class="data row21 col4"></td>
+<td id="T_cbe40_row21_col5" class="data row21 col5">False</td>
 </tr>
 <tr class="odd">
-<td id="T_0e7a6_level0_row22" class="row_heading level0 row22" data-quarto-table-cell-role="th">warm_start</td>
-<td id="T_0e7a6_row22_col0" class="data row22 col0">False</td>
-<td id="T_0e7a6_row22_col1" class="data row22 col1"></td>
-<td id="T_0e7a6_row22_col2" class="data row22 col2"></td>
-<td id="T_0e7a6_row22_col3" class="data row22 col3"></td>
-<td id="T_0e7a6_row22_col4" class="data row22 col4"></td>
-<td id="T_0e7a6_row22_col5" class="data row22 col5">False</td>
+<td id="T_cbe40_level0_row22" class="row_heading level0 row22" data-quarto-table-cell-role="th">warm_start</td>
+<td id="T_cbe40_row22_col0" class="data row22 col0">False</td>
+<td id="T_cbe40_row22_col1" class="data row22 col1"></td>
+<td id="T_cbe40_row22_col2" class="data row22 col2"></td>
+<td id="T_cbe40_row22_col3" class="data row22 col3"></td>
+<td id="T_cbe40_row22_col4" class="data row22 col4"></td>
+<td id="T_cbe40_row22_col5" class="data row22 col5">False</td>
 </tr>
 </tbody>
 </table>
