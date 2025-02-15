@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Andrea S. Gutmann">
-<meta name="dcterms.date" content="2025-02-10">
+<meta name="dcterms.date" content="2025-02-15">
 
 <title>paO_2 Prediction in Neurosurgical Patients</title>
 <style>
@@ -140,7 +140,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">2025-02-10</p>
+      <p class="date">2025-02-15</p>
     </div>
   </div>
   
@@ -265,7 +265,7 @@ notebook            7.0.4
 Python 3.12.0 (v3.12.0:0fb18b02c8, Oct  2 2023, 09:45:56) [Clang 13.0.0 (clang-1300.0.29.30)]
 macOS-15.3-arm64-arm-64bit
 -----
-Session information updated at 2025-02-10 09:44
+Session information updated at 2025-02-15 15:14
 None</code></pre>
 </div>
 </div>
@@ -331,7 +331,7 @@ None</code></pre>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplot_mosaic([[<span class="st">'a.'</span>, <span class="st">'b.'</span>, <span class="st">'c.'</span>], [<span class="st">'d.'</span>, <span class="st">'e.'</span>, <span class="st">'f.'</span>], [<span class="st">'.'</span>, <span class="st">'h.'</span>, <span class="st">'.'</span>]][:<span class="bu">int</span>(np.ceil(<span class="bu">len</span>(algorithm_dict.keys())<span class="op">/</span><span class="dv">2</span>))], layout <span class="op">=</span> <span class="st">'constrained'</span>, figsize<span class="op">=</span>(<span class="dv">3</span> <span class="op">*</span> config.get(<span class="st">'plot_size'</span>), <span class="bu">int</span>(np.ceil(<span class="bu">len</span>(algorithm_dict.keys())<span class="op">/</span><span class="dv">3</span>)) <span class="op">*</span> config.get(<span class="st">'plot_size'</span>)<span class="op">/</span><span class="fl">1.5</span>),)</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>fig.set_tight_layout(<span class="va">True</span>)</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>fig.suptitle(<span class="st">"CV scores (nRMSE) per Regressor</span><span class="ch">\n</span><span class="st">"</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>fig.suptitle(<span class="st">"Cross-validated nRMSE values per Regressor</span><span class="ch">\n</span><span class="st">"</span>)</span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>all_y <span class="op">=</span> []</span>
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> name <span class="kw">in</span> config.get(<span class="st">"plot_titles"</span>).keys():</span>
@@ -394,7 +394,7 @@ None</code></pre>
 <span id="cb7-63"><a href="#cb7-63" aria-hidden="true" tabindex="-1"></a>        ax.set_ylim(<span class="bu">min</span>(all_y) <span class="op">*</span> <span class="fl">1.05</span>, <span class="bu">max</span>(all_y) <span class="op">*</span> <span class="fl">0.95</span>)</span>
 <span id="cb7-64"><a href="#cb7-64" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-65"><a href="#cb7-65" aria-hidden="true" tabindex="-1"></a>        ax.set_xlabel(<span class="st">"Number of features selected"</span>)</span>
-<span id="cb7-66"><a href="#cb7-66" aria-hidden="true" tabindex="-1"></a>        ax.set_ylabel(<span class="st">"CV score"</span>)</span>
+<span id="cb7-66"><a href="#cb7-66" aria-hidden="true" tabindex="-1"></a>        ax.set_ylabel(<span class="st">"nRMSE"</span>)</span>
 <span id="cb7-67"><a href="#cb7-67" aria-hidden="true" tabindex="-1"></a>        ax.set_title(<span class="ss">f"</span><span class="sc">{</span>title<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb7-68"><a href="#cb7-68" aria-hidden="true" tabindex="-1"></a>        trans <span class="op">=</span> mtransforms.ScaledTranslation(<span class="dv">10</span><span class="op">/</span><span class="dv">72</span>, <span class="op">-</span><span class="dv">5</span><span class="op">/</span><span class="dv">72</span>, fig.dpi_scale_trans)</span>
 <span id="cb7-69"><a href="#cb7-69" aria-hidden="true" tabindex="-1"></a>        ax.text(<span class="fl">0.0</span>, <span class="fl">1.0</span>, ax_label, transform<span class="op">=</span>ax.transAxes <span class="op">+</span> trans,</span>
@@ -408,7 +408,7 @@ None</code></pre>
 <div id="fig_feature_selection" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
 <p><img src="2_RFE_files/figure-html/fig_feature_selection-output-1.png" width="3570" height="2362" class="figure-img"></p>
-<figcaption>CV RMSE scores for different Regressors for Feature Selection</figcaption>
+<figcaption>CV nRMSE scores for different Regressors for Feature Selection</figcaption>
 </figure>
 </div>
 </div>
