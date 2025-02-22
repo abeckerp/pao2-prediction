@@ -826,7 +826,7 @@ with open(config.get("pickle").get(f"tuned_models"), "wb") as eval_pickle:
     pickle.dump(eval_df, eval_pickle)
 
 # fig, axs = plt.subplots(nrows=3, ncols=2, figsize=(2 * config.get('plot_size'), 3 * config.get('plot_size')))
-fig, axs = plt.subplot_mosaic([['a.', 'b.', 'c.'], ['d.', 'e.', 'f.'], ['.', 'h.', '.']][:int(np.ceil(len(algorithm_dict.keys())/2))], layout = 'constrained', figsize=(3 * config.get('plot_size'), int(np.ceil(len(algorithm_dict.keys())/2)) * config.get('plot_size')/1.5),)
+fig, axs = plt.subplot_mosaic([['a.', 'b.', 'c.'], ['d.', 'e.', 'f.'], ['.', 'g.', '.']][:int(np.ceil(len(algorithm_dict.keys())/2))], layout = 'constrained', figsize=(3 * config.get('plot_size'), int(np.ceil(len(algorithm_dict.keys())/2)) * config.get('plot_size')/1.5),)
 fig.set_tight_layout(True)
 fig.suptitle(
     "Measured vs. predicted $paO_2$ values by different regressors with tuned parameters\n"
