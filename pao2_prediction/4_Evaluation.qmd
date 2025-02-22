@@ -245,11 +245,11 @@ plt.title("Confusion Matrix")
 plt.show()
 plt.savefig(f"plots/confusion_matrix_{best_regressor}.png", dpi=300, bbox_inches="tight")
 
-# accuracy
-print(f"Accuracy: {int(100*len(cnf_df[cnf_df["y_true_interval"]==cnf_df["y_pred_interval"]])/len(cnf_df))} %.")
-# f1 score
-f1 = metrics.f1_score([True]*len(cnf_df), cnf_df["y_true_interval"]==cnf_df["y_pred_interval"])
-print(f"F1 score: {int(f1*100)} %.")
+# # accuracy
+# print(f"Accuracy: {int(100*len(cnf_df[cnf_df["y_true_interval"]==cnf_df["y_pred_interval"]])/len(cnf_df))} %.")
+# # f1 score
+# f1 = metrics.f1_score([True]*len(cnf_df), cnf_df["y_true_interval"]==cnf_df["y_pred_interval"])
+# print(f"F1 score: {int(f1*100)} %.")
 ```
 
 ### Binning table Table 2
