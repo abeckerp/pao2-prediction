@@ -70,13 +70,13 @@ pickle:
 plot_size: 4
 
 plot_titles:
-  gbr: Gradient Boosting Regression Tree
+  gbr: Gradient Boosting for Regression
   knn: KNN Regressor
   sgd: Linear Model with SGD
   mlp: Multi-layer Perceptron
   rfr: Random Forest Regressor
-  svr: Support Vector Regression
-  mlr: Multivariable Linear Regression
+  svr: Epsilon-Support Vector Regression
+  mlr: Multivariable Ordinary Least Squares Linear Regression
 
 single_measurements_columns:
   - age

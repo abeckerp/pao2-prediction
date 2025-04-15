@@ -13,6 +13,7 @@ format:
         toc-title: Contents
         number-sections: true
     # pdf:
+    #     keep-tex: true
     #     toc: true
     #     number-sections: true
     #     toc-location: left
@@ -41,7 +42,7 @@ jupyter: python3
 ### Loading libraries
 ```{python}
 # | label: loading_libraries
-import csv, pickle, sys, time, sklearn, scipy, seaborn, statsmodels, session_info, random, math, matplotlib, os, time, pprint, yaml, shap
+import csv, pickle, sys, time, sklearn, scipy, seaborn, statsmodels, session_info, random, math, matplotlib, os, time, pprint, yaml, shap, pytolemaic
 
 import numpy as np
 import pandas as pd
@@ -65,6 +66,7 @@ from sklearn.neighbors import KNeighborsRegressor
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.svm import SVR
 from sklearn.linear_model import LinearRegression, SGDRegressor
+from sklearn.neural_network import MLPRegressor
 from statsmodels.stats.outliers_influence import variance_inflation_factor
 from matplotlib.ticker import NullFormatter
 from time import perf_counter
@@ -72,6 +74,11 @@ from datetime import datetime
 
 from itertools import chain
 
+from pytolemaic import PyTrust
+from pytolemaic import DMD
+from pytolemaic import Metrics
+from sklearn.impute import SimpleImputer
+from sklearn.pipeline import Pipeline
 
 from custom_functions import (
     evaluate,
@@ -101,6 +108,7 @@ algorithm_dict = {
     "svr": SVR(**config.get("default_parameters").get("svr")),
     "sgd": SGDRegressor(**config.get("default_parameters").get("sgd")),
     "mlr": LinearRegression(**config.get("default_parameters").get("mlr")),
+    "mlp": MLPRegressor(**config.get("default_parameters").get("mlp")),
 }
 
 pp = pprint.PrettyPrinter(indent=4)
@@ -234,6 +242,7 @@ cnf_df = pd.DataFrame(
 
 matplotlib.rcParams.update(matplotlib.rcParamsDefault)
 
+plt.figure(figsize=(1200/300, 1200/300), dpi=300)
 cnf_disp = metrics.ConfusionMatrixDisplay.from_predictions(
     cnf_df["y_true_interval"],
     cnf_df["y_pred_interval"],display_labels=y_pred_interval.categories.astype(str),
@@ -242,8 +251,9 @@ cnf_disp = metrics.ConfusionMatrixDisplay.from_predictions(
 
 plt.title("Confusion Matrix")
 
-plt.show()
 plt.savefig(f"plots/confusion_matrix_{best_regressor}.png", dpi=300, bbox_inches="tight")
+
+plt.show()
 
 # # accuracy
 # print(f"Accuracy: {int(100*len(cnf_df[cnf_df["y_true_interval"]==cnf_df["y_pred_interval"]])/len(cnf_df))} %.")
@@ -300,6 +310,8 @@ explainer = shap.Explainer(
     feature_names=[config.get("column_names").get(feature) for feature in algo_train_data_dict.get(best_regressor).get("selected_features")]
 )
 shap_values = explainer(algo_train_data_dict.get(best_regressor).get("x_test")[:, 1:])
+
+plt.figure(figsize=(1200/300, 1200/300), dpi=300)
 
 shap_plot = shap.plots.beeswarm(shap_values, show=False)
 plt.title(f"SHAP values for {config.get('plot_titles').get(best_regressor)}")
@@ -430,7 +442,7 @@ for col_idx, values in enumerate(X_unscaled.T):
             f"\tmean {col_name} in overestimated (n={len(list_over)}): {round(np.mean(list_over),3)} - mean {col_name} in underestimated (n={len(list_under)}): {round(np.mean(list_under),3)}"
         )
 
-plt.rcParams["figure.figsize"] = [config.get("plot_size"), config.get("plot_size")]
+plt.figure(figsize=(1200/300, 1200/300), dpi=300)
 fig, ax = plt.subplots()
 ax.scatter(y.ravel(), predictions, edgecolors=(0, 0, 0))
 ax.scatter(pao2_x_list_over, pao2_pred_list_over, edgecolors=(0, 0, 0), color="yellow")
@@ -469,3 +481,158 @@ plt.savefig(
 plt.show()
 plt.close("all")
 ```
+
+<!--
+## Sensitivity Analysis
+
+https://medium.com/@otalmi/feature-sensitivity-in-a-click-e51e8baf5ba9
+
+https://medium.com/data-science/pytolemaic-package-for-model-quality-analysis-2b7bea751cfd 
+
+```{python}
+# | label: sensitivity_analysis
+
+feature_list = algo_train_data_dict.get(best_regressor).get("selected_features")
+
+# Adding imputer before RF to support missing values.
+# Support missing values is required for calculating sensitivities to missing values
+steps = []
+steps.append(("Scaler", preprocessing.MinMaxScaler()))
+steps.append(("Imputer", SimpleImputer()))
+steps.append(("Estimator", estimator))
+pipeline = Pipeline(steps=steps)
+
+pipeline.fit(
+    algo_train_data_dict.get(best_regressor).get("x_train_unscaled")[:, 1:],
+    train_test_data.get("train").get("y")[:, 1:].ravel(),
+)
+
+pytrust = PyTrust(
+    model=pipeline,
+    xtrain=algo_train_data_dict.get(best_regressor).get("x_train_unscaled")[:, 1:],
+    ytrain=train_test_data.get("train").get("y")[:, 1:].ravel(),
+    xtest=algo_train_data_dict.get(best_regressor).get("x_test_unscaled")[:, 1:],
+    ytest=train_test_data.get("test").get("y")[:, 1:].ravel(),
+    sample_meta_train=None,
+    sample_meta_test=None,
+    columns_meta={DMD.FEATURE_NAMES: feature_list},
+    metric="rmse",
+)
+
+### Sensitivity Report
+
+sensitivity_report = pytrust.sensitivity_report
+# pprint.pprint(sensitivity_report.to_dict_meaning(), width=140)
+pprint.pprint(sensitivity_report.to_dict(), width=120)
+
+pprint.pprint(sensitivity_report.insights())
+
+### Scoring Report
+
+scoring_report = pytrust.scoring_report
+# pprint.pprint(scoring_report.to_dict_meaning(), width=140)
+pprint.pprint(scoring_report.to_dict(), width=120)
+
+scoring_report.plot()
+plt.show()
+plt.close()
+
+### Lime Explanation
+
+# sample = algo_train_data_dict.get(best_regressor).get("x_test")[589, 1:]
+# lime_explainer = pytrust.create_lime_explainer()
+# explanation = lime_explainer.explain(sample)
+
+### plot explanation
+# lime_explainer.plot(sample)
+
+# print("Lime explanation is:")
+# pprint.pprint(explanation)
+```
+
+Figure 9
+```{python}
+# | label: sensitivity_plots
+
+plt.style.use('seaborn-v0_8-whitegrid') 
+
+fig, axs = plt.subplots(3, 2, figsize=(14, 14))
+axs = axs.flatten() 
+
+def plot_sensitivity(ax, title, sensitivities, column_names):
+    sorted_features = sorted(sensitivities.items(), key=lambda kv: -kv[1])
+    sorted_features = sorted_features[:10]
+
+    keys, values = zip(*sorted_features)
+    keys = [f"{column_names.get(k, k)}" for k in keys]
+    reversed_keys = list(reversed(keys))
+    reversed_values = list(reversed(values))
+
+    ax.barh(reversed_keys, reversed_values, color="#1f77b4")
+    ax.set_title(title, fontsize=12)
+    ax.set_xlabel('Sensitivity Value')
+    ax.tick_params(axis='y', labelsize=10)
+    ax.grid(True, linestyle='--', alpha=0.6)
+
+    for i, v in enumerate(reversed_values):
+        ax.text(v + 0.01, i, f"{v:.2f}", va='center', fontsize=9)
+
+def plot_stats(ax, title, stats):
+    keys, values = zip(*sorted(stats.items()))
+    ax.bar(keys, values, color="#ff7f0e")
+    ax.set_title(title, fontsize=12)
+    ax.set_ylabel('# of Features')
+    ax.tick_params(axis='x', rotation=45)
+    ax.grid(True, linestyle='--', alpha=0.6)
+
+    for i, v in enumerate(values):
+        ax.text(i, v + 0.5, str(v), ha='center', fontsize=9)
+
+def plot_vulnerability(ax, vulnerability_data):
+    keys, values = zip(*sorted(vulnerability_data.items()))
+    bars = ax.bar(keys, values, color='#d62728')
+    ax.set_title("Model's Vulnerability Metrics", fontsize=12)
+    ax.set_ylabel('Vulnerability Scores')
+    ax.set_ylim(0, 1)
+    ax.tick_params(axis='x', rotation=45)
+    ax.grid(True, axis='y', linestyle='--', alpha=0.6)
+
+    for bar in bars:
+        height = bar.get_height()
+        ax.text(bar.get_x() + bar.get_width() / 2, height + 0.02,
+                f'{height:.2f}', ha='center', va='bottom', fontsize=9)
+
+sensitivity_dict = sensitivity_report.to_dict()
+column_names = config.get('column_names', {})
+
+# Missing Report
+missing_sensitivities = sensitivity_dict.get("missing_report", {}).get("sensitivities", {})
+missing_stats = sensitivity_dict.get("missing_report", {}).get("stats", {})
+
+# Shuffle Report
+shuffle_sensitivities = sensitivity_dict.get("shuffle_report", {}).get("sensitivities", {})
+shuffle_stats = sensitivity_dict.get("shuffle_report", {}).get("stats", {})
+
+# Vulnerability Report
+vulnerability_data = sensitivity_dict.get("vulnerability_report", {})
+
+# === Plot All ===
+plot_sensitivity(axs[0], '"Missing" Feature Sensitivity', missing_sensitivities, column_names)
+plot_stats(axs[1], '"Missing" Sensitivity Statistics', missing_stats)
+
+plot_sensitivity(axs[2], '"Shuffle" Feature Sensitivity', shuffle_sensitivities, column_names)
+plot_stats(axs[3], '"Shuffle" Sensitivity Statistics', shuffle_stats)
+
+plot_vulnerability(axs[4], vulnerability_data)
+
+# Hide the unused 6th plot
+axs[5].axis('off')
+
+plt.tight_layout()
+
+plt.savefig("plots/sensitivity_summary.png", dpi=300, bbox_inches='tight')
+
+plt.close()
+
+```
+-->

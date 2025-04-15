@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Andrea S. Gutmann">
-<meta name="dcterms.date" content="2025-02-10">
+<meta name="dcterms.date" content="2025-04-15">
 
 <title>paO_2 Prediction in Neurosurgical Patients</title>
 <style>
@@ -153,7 +153,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">2025-02-10</p>
+      <p class="date">2025-04-15</p>
     </div>
   </div>
   
@@ -365,17 +365,17 @@ jupyterlab          4.3.3
 notebook            7.0.4
 -----
 Python 3.12.0 (v3.12.0:0fb18b02c8, Oct  2 2023, 09:45:56) [Clang 13.0.0 (clang-1300.0.29.30)]
-macOS-15.3-arm64-arm-64bit
+macOS-15.4-arm64-arm-64bit
 -----
-Session information updated at 2025-02-10 09:43
+Session information updated at 2025-04-15 11:36
 None
 Darwin
-24.3.0
+24.4.0
 Starting: 6,027 surgeries with 25,032 datapoints.
 </code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>/var/folders/ff/zlqg1pks12q23nf7rf3m7j3r0000gn/T/ipykernel_42754/3462771153.py:40: FutureWarning: Setting an item of incompatible dtype is deprecated and will raise in a future error of pandas. Value '{'I63.9'}|S06.30' has dtype incompatible with float64, please explicitly cast to a compatible dtype first.
+<pre><code>/var/folders/ff/zlqg1pks12q23nf7rf3m7j3r0000gn/T/ipykernel_46836/3462771153.py:40: FutureWarning: Setting an item of incompatible dtype is deprecated and will raise in a future error of pandas. Value '{'I63.9'}|S06.30' has dtype incompatible with float64, please explicitly cast to a compatible dtype first.
   data.loc[data["identifier"] == identifier, "diagnoses"] = "|".join(diagnoses)</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
@@ -656,7 +656,7 @@ Remaining: 4,175 surgeries with 14,495 datapoints.
 </code></pre>
 </div>
 </div>
-<div id="6799b18e" class="cell" data-execution_count="6">
+<div id="88b6090e" class="cell" data-execution_count="6">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Average number of ABG per patient: </span><span class="sc">{</span><span class="bu">round</span>(<span class="bu">len</span>(data)<span class="op">/</span><span class="bu">len</span>(data.identifier.unique()),<span class="dv">2</span>)<span class="sc">}</span><span class="ss"> in </span><span class="sc">{</span><span class="bu">int</span>(np.mean(data.mv_time))<span class="sc">}</span><span class="ss"> min =&gt; one ABG every </span><span class="sc">{</span><span class="bu">int</span>((np.mean(data.mv_time))<span class="op">/</span>(<span class="bu">len</span>(data)<span class="op">/</span><span class="bu">len</span>(data.identifier.unique())))<span class="sc">}</span><span class="ss"> minutes."</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -665,7 +665,7 @@ Remaining: 4,175 surgeries with 14,495 datapoints.
 <pre><code>Average number of ABG per patient: 3.47 in 396 min =&gt; one ABG every 114 minutes.</code></pre>
 </div>
 </div>
-<div id="cfcf4e5d" class="cell" data-execution_count="7">
+<div id="f30a7e0d" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Sampling sites for pH values:"</span>)</span>
@@ -685,7 +685,7 @@ Counter({'arteriell': 3680,
          'gem-venös': 13})</code></pre>
 </div>
 </div>
-<div id="043e726f" class="cell" data-execution_count="8">
+<div id="944bef77" class="cell" data-execution_count="8">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Sampling sites for Hb values:"</span>)</span>
