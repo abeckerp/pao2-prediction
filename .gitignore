@@ -13,4 +13,4 @@ _lasso
 .DS_Store
 poetry.lock
 .vdoc.*
-pao2_prediction_project/latex
+pao2_prediction/latex
